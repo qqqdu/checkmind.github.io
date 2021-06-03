@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>React cli | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>React cli</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/09/27</time>
+            
+            
+          </div>
+          <p>不想再重复的clone老文件了  </p>
+<h1 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h1><p>以前每开一个项目都要配置各种东西，Typescript啦，Redux啦，React啦。太麻烦了！  </p>
+<p>所以写一个自己用的Cli，能快速给我生成一个代码目录，减少生命中浪费的无数个十几分钟。  (即使是create-react-app自己也要改很多。)</p>
+<h2 id="初始化项目"><a href="#初始化项目" class="headerlink" title="初始化项目"></a>初始化项目</h2><p><code>npm init</code><br>新建 index.js 文件<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#! /usr/bin/env node</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'rts-cli'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>并在 package 中将 index 作为可执行包入口<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"bin": &#123;</span><br><span class="line">  "rts-cli": "./index.js"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>修改path，在全局可通过 <code>rts-cli</code> 直接调用<br><code>npm link</code><br>现在你在任何地方调用 <code>rts-cli</code> 就可以启动cli了。</p>
+<h2 id="我想要……粉嫩嫩的命令行"><a href="#我想要……粉嫩嫩的命令行" class="headerlink" title="我想要……粉嫩嫩的命令行"></a>我想要……粉嫩嫩的命令行</h2><p>首先给自己 new 一个二次元小妹妹，让每次启动项目都有恋爱的感觉。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">........................................................</span><br><span class="line">..............,/O@@@@@@@@@@\]...........................</span><br><span class="line">...........,@@@@@@//\@@@@@@@@@@O&apos;.......................</span><br><span class="line">.........//O@@OO@@@@@@@@@@@@@O@@@@\.....................</span><br><span class="line">.......,/*OO@OOO@@@@@@@@@@@@@@@@@@@@&apos;...................</span><br><span class="line">......=O&apos;=oOOOO@OOO@@@@@@@@@@@@@@O@@@\..................</span><br><span class="line">.....=\^.^=.[O@OOOO@OO@OOO@@@@@@@@@@@@O&apos;................</span><br><span class="line">...../O.=...=O@\OOOOOOOOOO@@@@@@OOOO@@@O................</span><br><span class="line">....=\O*==o*OOO=^O@/O@OOO\OO/O@/O@OO@@@O\...............</span><br><span class="line">....OOOoo/ooO@O/@OOOO@OOOO@OO&apos;O\O@OO@@@@O...............</span><br><span class="line">...=@OOOOOOo@OO/@OOOO@OOOO@@\.,OO@OO@@@@O^..............</span><br><span class="line">.../OO@@OO@O@O@O@O@OO@OOOO\@\]..@@O@@@@@@^..............</span><br><span class="line">...OOO@@@O@@@@@@@@@O@@@OO@@@@@@@O@O@@@@@O^..............</span><br><span class="line">...^=@@@@@O@@@@@@@\@O@@@@\,@@@@@@@@@@@@@/...............</span><br><span class="line">...\.@@@O@@@@@oOOo&apos;*....**ooOOO\@@@@O@@\................</span><br><span class="line">....*.@@@@/OOoooo&apos;***,&apos;..**\oooO\O\@@@.&apos;................</span><br><span class="line">.......\@@@@\*****........******@@OO&apos;...................</span><br><span class="line">.........\@@@@&apos;***.=@@@@^..***,@@@/...................]]</span><br><span class="line">..........,OO@@@]***,[[&apos;****]OOO&apos;.............],[*...*=</span><br><span class="line">............\&apos;.\O@@\&apos;**,/@@OO[....]/[&apos;*********.......O^</span><br><span class="line">.................,^[OO@@@@@@OOOOO/*******.*****....,/O@^</span><br><span class="line">.................=^\,OOOOOOO@@/&apos;.***....*/OOOOOOOOO[[\&apos;.</span><br><span class="line">................/O&apos;=^=OOOOO/&apos;\O*..*.....=@@@@@/&apos;....=\*.</span><br><span class="line">.............,/*.O*]O&apos;**/&apos;.//*=o.****..=@@&apos;.......,/[...</span><br><span class="line">.........../[o[[*O]]]*[*..*.....o^*\O&apos;*@&apos;.......**..,]]O</span><br><span class="line">.......,/******.*O.***........***\\/\*=^.....=@O/O.@@@&apos;.</span><br><span class="line">....../..***..**=O**........****/@@@@/]O^.,/.O^=.o.&apos;....</span><br><span class="line">.....,^...**..,o=O*****....******,\^.,@\]O/&apos;..OO@@\\....</span><br><span class="line">.....=^...*&apos;*oooOOo******..*,&apos;****/^....\O\...&apos;.,O@/\^..</span><br><span class="line">......^*.*=OOOO@O@@*****,/\.o^*..=/.......O.............</span><br><span class="line">......=**.,O@O@@/\@.....**\OOo*.,/........=^............</span><br><span class="line">.......\***OOo=^...\\&apos;...**=@O^,O*......**=^............</span><br><span class="line">.......=&apos;*=OO^O......,\O]..=@OOOOo],&apos;]ooOo/.............</span><br><span class="line">........\**&apos;O/^..........,OOOO@OOOOOOOOOO@..............</span><br><span class="line">.........&apos;***@Oo\&apos;*.....*]oO@/\@O@@@@@@@@@..............</span><br></pre></td></tr></table></figure></p>
+<p>用图片转为字符，这很常见，懒得去写，直接用了网上的工具生成。  </p>
+<p>还有命令行太死板，基本是黑底白字，但我需要粉嫩嫩的感觉。</p>
+<p>在命令行我们可以用 ascii 码来做文字修改。<br>对console做简单的封装<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'\x1B[35m%s\x1b[39m'</span>, str);  <span class="comment">//yellow</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后，把我们的小R打印出来，当我的命令行启动的时候，你会看到。<br><img src="https://img1.dxycdn.com/2019/0929/728/3371034457464592133-2.png" alt></p>
+<p>太棒了！！</p>
+<h2 id="提供给用户的命令"><a href="#提供给用户的命令" class="headerlink" title="提供给用户的命令"></a>提供给用户的命令</h2><p>比如用户输入了 <code>rts-cli --help</code> ，我们就要给他打印帮助内容。所以我们需要一个库，来分离不同的指令。<br>commander 命令就是干这个的，拿到用户的指令。<br>安装 commander 包<br><code>npm install --save-dev commander</code> </p>
+<h3 id="简单的输入指令"><a href="#简单的输入指令" class="headerlink" title="简单的输入指令"></a>简单的输入指令</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#! /usr/bin/env node</span></span><br><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">const</span> program = <span class="built_in">require</span>(<span class="string">'commander'</span>)</span><br><span class="line">program</span><br><span class="line">.command(<span class="string">'create &lt;projectName&gt;'</span>)</span><br><span class="line">.action(<span class="function"><span class="keyword">function</span>(<span class="params">projectName</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(projectName)</span><br><span class="line">&#125;)</span><br><span class="line">program.parse(process.argv)</span><br></pre></td></tr></table></figure>
+<p>当运行 <code>rts-cli create name</code> 时，会打印 <code>name</code>  </p>
+<h2 id="带选项的指令"><a href="#带选项的指令" class="headerlink" title="带选项的指令"></a>带选项的指令</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> program = <span class="built_in">require</span>(<span class="string">'commander'</span>);</span><br><span class="line"></span><br><span class="line">program</span><br><span class="line">  .option(<span class="string">'-d, --debug'</span>, <span class="string">'output extra debugging'</span>)</span><br><span class="line">  .option(<span class="string">'-s, --small'</span>, <span class="string">'small pizza size'</span>)</span><br><span class="line">  .option(<span class="string">'-p, --pizza-type &lt;type&gt;'</span>, <span class="string">'flavour of pizza'</span>);</span><br><span class="line"></span><br><span class="line">program.parse(process.argv);</span><br><span class="line"><span class="keyword">if</span> (program.debug) <span class="built_in">console</span>.log(program.opts());</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'pizza details:'</span>);</span><br><span class="line"><span class="keyword">if</span> (program.small) <span class="built_in">console</span>.log(<span class="string">'- small pizza size'</span>);</span><br><span class="line"><span class="keyword">if</span> (program.pizzaType) <span class="built_in">console</span>.log(<span class="string">`- <span class="subst">$&#123;program.pizzaType&#125;</span>`</span>);</span><br></pre></td></tr></table></figure>
+<p>你可以直接用 program 访问那些属性，但 a-bc 要转成驼峰 aBc</p>
+<h2 id="readline-sync"><a href="#readline-sync" class="headerlink" title="readline-sync"></a>readline-sync</h2><p>安装 readline-sync 包<br><code>npm install --save-dev readline-sync</code><br>我们还需要用户在使用中，做一些判断，比如输入<br><code>node index</code> 后，命令行还可以继续输入，可能是二次确认，用户需要输入 Y/N，也可能设置 项目名/作者/语言。<br>因此我们需要这个包。它可以读到命令行的输入值。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> readlineSync = <span class="built_in">require</span>(<span class="string">'readline-sync'</span>);</span><br><span class="line"><span class="keyword">var</span> userName = readlineSync.question(<span class="string">'May I have your name? '</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'Hi '</span> + userName + <span class="string">'!'</span>);</span><br><span class="line"><span class="comment">// Handle the secret text (e.g. password).</span></span><br><span class="line"><span class="keyword">var</span> favFood = readlineSync.question(<span class="string">'What is your favorite food? '</span>, &#123;</span><br><span class="line">  hideEchoBack: <span class="literal">true</span> <span class="comment">// The typed text on screen is hidden by `*` (default).</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'Oh, '</span> + userName + <span class="string">' loves '</span> + favFood + <span class="string">'!'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>我们通过它，可以拿到用户的输入信息了<br><img src="https://img1.dxycdn.com/2019/0929/902/3371035516174107033-2.png" alt></p>
+<h2 id="拉取代码保存到用户目录"><a href="#拉取代码保存到用户目录" class="headerlink" title="拉取代码保存到用户目录"></a>拉取代码保存到用户目录</h2><p>用git拉去远程的空项目，然后保存在本地，代码很简单。<br><code>simple-git</code> 是个很简单的git操作工具，在远程目录下有两个项目，一个是redux项目，一个是Hook项目，先将这个仓库 clone 到本地，然后复制对应的项目，复制完成，卸载仓库。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> git = <span class="built_in">require</span>(<span class="string">'simple-git/promise'</span>);</span><br><span class="line"><span class="keyword">const</span> remote = <span class="string">'https://github.com/qqqdu/ReactTemplate.git'</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs-extra'</span>);</span><br><span class="line"></span><br><span class="line">exports.getCode =  <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> git().silent(<span class="literal">true</span>).clone(remote)</span><br><span class="line">&#125;</span><br><span class="line">exports.writeProject = <span class="function">(<span class="params">type, fileName</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> fileList = [<span class="string">'typescript'</span>, <span class="string">'react-hook'</span>]</span><br><span class="line">  fs.copy(<span class="string">`./ReactTemplate/<span class="subst">$&#123;fileList[type]&#125;</span>`</span>, <span class="string">`./<span class="subst">$&#123;fileName&#125;</span>`</span>, err =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">return</span> <span class="built_in">console</span>.error(err)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'success!'</span>)</span><br><span class="line">    <span class="comment">// 删掉git项目，只保留对应模版</span></span><br><span class="line">    fs.removeSync(<span class="string">'./ReactTemplate'</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>最终的效果<br><img src="https://img1.dxycdn.com/2019/0929/243/3371036622128207876-2.gif" alt></p>
+<p>你也可以制作自己的cli<br><a href="https://github.com/qqqdu/rts-cli" target="_blank" rel="noopener">项目地址</a></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Why"><span class="toc-number">1.</span> <span class="toc-text">Why</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化项目"><span class="toc-number">1.1.</span> <span class="toc-text">初始化项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我想要……粉嫩嫩的命令行"><span class="toc-number">1.2.</span> <span class="toc-text">我想要……粉嫩嫩的命令行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#提供给用户的命令"><span class="toc-number">1.3.</span> <span class="toc-text">提供给用户的命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简单的输入指令"><span class="toc-number">1.3.1.</span> <span class="toc-text">简单的输入指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#带选项的指令"><span class="toc-number">1.4.</span> <span class="toc-text">带选项的指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#readline-sync"><span class="toc-number">1.5.</span> <span class="toc-text">readline-sync</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拉取代码保存到用户目录"><span class="toc-number">1.6.</span> <span class="toc-text">拉取代码保存到用户目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结束"><span class="toc-number">1.7.</span> <span class="toc-text">结束</span></a></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

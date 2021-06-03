@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>你为什么看不懂源码之Vue 3.0 结语 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>你为什么看不懂源码之Vue 3.0 结语</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/10/29</time>
+            
+            
+          </div>
+          <p>距离上一篇已经过去了好久……  </p>
+<h2 id="先唠会儿嗑"><a href="#先唠会儿嗑" class="headerlink" title="先唠会儿嗑"></a>先唠会儿嗑</h2><p>之前大概了解了 响应式原理、让普通属性变成响应式数据的 ref、effect 的实现以及 计算属性的包装。  </p>
+<p>本篇从逆向的角度做个简单的整理</p>
+<h2 id="假如你是作者"><a href="#假如你是作者" class="headerlink" title="假如你是作者"></a>假如你是作者</h2><p>你的需求是开发 <code>reactive</code> 模块，它是干什么的呢？将变量生成响应式数据。  </p>
+<p>响应式数据被更改时，需要做一些反应。那怎么能检测响应式的变更呢？在谈这个问题前，得先罗列下，变量有哪些类型？  </p>
+<h3 id="变量的类型"><a href="#变量的类型" class="headerlink" title="变量的类型"></a>变量的类型</h3><h4 id="基本类型"><a href="#基本类型" class="headerlink" title="基本类型"></a>基本类型</h4><p>String Number Symbol Boolean</p>
+<p>形如:  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">2</span></span><br><span class="line"><span class="keyword">let</span> b = <span class="string">'lalla'</span></span><br><span class="line"><span class="keyword">let</span> c = <span class="built_in">Symbol</span>(<span class="string">'cObj'</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="普通对象"><a href="#普通对象" class="headerlink" title="普通对象"></a>普通对象</h4><p>形如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123; <span class="attr">name</span>: <span class="string">'obj'</span> &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="集合对象"><a href="#集合对象" class="headerlink" title="集合对象"></a>集合对象</h4><p>Map WeakMap Set WeakSet<br>形如</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> map = <span class="keyword">new</span> <span class="built_in">Map</span>([&#123;<span class="attr">name</span>: <span class="string">'map'</span>&#125;])</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">set</span> = new Set([1,2,3])</span><br></pre></td></tr></table></figure>
+<p>基本上是这三类，但这三类可能交织纵横，互相“包庇”！我太难了。</p>
+<h3 id="拦截"><a href="#拦截" class="headerlink" title="拦截"></a>拦截</h3><p>既然分出了变量的类型，逐一拦截，然后再做“反应”就行了。先从普通变量谈起。</p>
+<h4 id="普通变量拦截"><a href="#普通变量拦截" class="headerlink" title="普通变量拦截"></a>普通变量拦截</h4><p>不管是 <code>Object.defineProperty()</code> 还是 <code>Proxy()</code>，拦截的都是对象，所以通过这两种方式来拦截普通变量肯定行不通，但我们可以包装它，从而实现拦截。最简单的方式便是对象的特性“存取器”。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">3</span></span><br><span class="line"><span class="keyword">const</span> b = &#123;</span><br><span class="line">  <span class="keyword">get</span> value() &#123;</span><br><span class="line">     <span class="keyword">return</span> a</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="keyword">set</span> value(val) &#123;</span><br><span class="line">     a = val</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这块儿的实现便是 <code>Ref.ts</code></p>
+<h3 id="普通对象的拦截"><a href="#普通对象的拦截" class="headerlink" title="普通对象的拦截"></a>普通对象的拦截</h3><p>这在 Vue2.0 中已经实现过了，用的 ES5 的 <code>Object.defineProperty</code>。直接拿来用就行了。  </p>
+<blockquote>
+<p>A:  等等，不能用！！<br>B: 为什么？<br>A: Object.defineProperty 在拦截对象时，需要遍历其 key 值。如果对象层级深，还要递归的遍历。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.keys(obj).forEach(<span class="function">(<span class="params">key</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">Object</span>.defineProperty(obj, key, handlers)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>A： 它还拦截不了数组的方法，想拦截还得做 hack，包装 push\pop……操作。<br>B: 那咋整<br>A: Proxy 呀，以上问题它都能迎刃而解，具体我们不是在往期文章分析过了么。这里就不赘述了。</p>
+</blockquote>
+<h3 id="集合的拦截"><a href="#集合的拦截" class="headerlink" title="集合的拦截"></a>集合的拦截</h3><p><code>Proxy</code> 这么牛，集合应该也能拦截呀。不幸的是，集合的各种方法都不能被 Proxy 拦截。<br>拿 Set 类型举例子。  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sets = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line"><span class="keyword">let</span> p2 = <span class="keyword">new</span> <span class="built_in">Proxy</span>(sets, &#123;</span><br><span class="line">  <span class="keyword">get</span>(target, key ,receiver) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Reflect</span>.get(target, key, receiver)</span><br><span class="line">  &#125;,</span><br><span class="line">  add() &#123;&#125;</span><br><span class="line">&#125;)</span><br><span class="line">p2.add(<span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+<p>当你这样调用时，会发现控制台报错了  </p>
+<p><code>Uncaught TypeError: Method Set.prototype.add called on incompatible receiver [object Object]</code></p>
+<p>导致这个报错的原因是，在调用 <code>add</code> 时，其内部的 <code>this</code> 本应该是 <code>set</code> 本身，但在此处变为了 <code>p2</code>。</p>
+<p>那咋整呢，要不，我们自己实现个 add 方法，在 <code>p2.add</code> 时，用 <code>apply</code>改变 指针。<br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sets = <span class="keyword">new</span> Set([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line"><span class="keyword">let</span> p2 = <span class="keyword">new</span> Proxy(sets, &#123;</span><br><span class="line">  <span class="keyword">get</span>(target, key ,receiver) &#123;</span><br><span class="line">    <span class="keyword">const</span> fn = Reflect.get(target, key, receiver)</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> fn === <span class="string">'function'</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="function">(<span class="params">...val</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> target[key].apply(sets, val)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> fn</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line">p2.add(<span class="number">6</span>)</span><br></pre></td></tr></table></figure></p>
+<p>真实情况比这要复杂，你需要考虑各种 traps。  </p>
+<p>经过以上，目前我们也能拦截到 <code>collections</code> 了。</p>
+<h3 id="计算属性"><a href="#计算属性" class="headerlink" title="计算属性"></a>计算属性</h3><p>响应式数据是不够的，如果一个数据的变更引起了一堆复杂的逻辑，我们处理起来就会特别麻烦，计算属性显然是个好选择。  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> data = reactive(&#123;</span><br><span class="line">  name: <span class="string">'qqqdu'</span></span><br><span class="line">&#125;)</span><br><span class="line">computed(<span class="function">(<span class="params">val</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> data.name + <span class="string">' hello'</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>以上方法有两个场景：  </p>
+<ul>
+<li>1，初始化时，计算属性的函数参数会被执行一遍</li>
+<li>2，每次函数内计算属性改变时，函数也会执行一遍。</li>
+</ul>
+<p>前者好说，要实现 2，就需要建立起 函数与计算属性的联系。这个联系在什么阶段建立比较好呢，当然是初始化的时候。  </p>
+<p>当初始化时，开始调用函数时加锁，运行到 <code>data.name</code> 会触发其 <code>Proxy get</code>，这说明该函数依赖这个计算属性，那他们之间的联系就建立起来了。当函数生命周期结束时，解锁就可以了。  </p>
+<p>那 2，什么时候执行呢，当然是计算属性 <code>set</code> 时了，如果值发生了变化，就要遍历执行与之相关的所有计算函数。  </p>
+<p>到这里就可以了，带着这个思路再回顾，会清晰不少。</p>
+<h3 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h3><blockquote>
+<p>源码这种东西吧，越看越觉得自己卑微，向大佬们致敬！  –xiaodu</p>
+</blockquote>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a href="https://www.ecma-international.org/ecma-262/6.0/#sec-array-exotic-objects" target="_blank" rel="noopener">ecma</a><br><a href="https://tc39.es/ecma262/" target="_blank" rel="noopener">https://tc39.es/ecma262/</a></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#先唠会儿嗑"><span class="toc-number">1.</span> <span class="toc-text">先唠会儿嗑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#假如你是作者"><span class="toc-number">2.</span> <span class="toc-text">假如你是作者</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#变量的类型"><span class="toc-number">2.1.</span> <span class="toc-text">变量的类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#基本类型"><span class="toc-number">2.1.1.</span> <span class="toc-text">基本类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#普通对象"><span class="toc-number">2.1.2.</span> <span class="toc-text">普通对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#集合对象"><span class="toc-number">2.1.3.</span> <span class="toc-text">集合对象</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#拦截"><span class="toc-number">2.2.</span> <span class="toc-text">拦截</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#普通变量拦截"><span class="toc-number">2.2.1.</span> <span class="toc-text">普通变量拦截</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#普通对象的拦截"><span class="toc-number">2.3.</span> <span class="toc-text">普通对象的拦截</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集合的拦截"><span class="toc-number">2.4.</span> <span class="toc-text">集合的拦截</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算属性"><span class="toc-number">2.5.</span> <span class="toc-text">计算属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结束"><span class="toc-number">2.6.</span> <span class="toc-text">结束</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">3.</span> <span class="toc-text">参考文献</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

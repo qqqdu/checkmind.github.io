@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>你为什么看不懂源码之Vue 3.0 面面俱到 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>你为什么看不懂源码之Vue 3.0 面面俱到</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/10/10</time>
+            
+            
+          </div>
+          <p>距离上一篇结束已经过去了整整24小时  </p>
+<h2 id="先唠会儿嗑"><a href="#先唠会儿嗑" class="headerlink" title="先唠会儿嗑"></a>先唠会儿嗑</h2><p>这篇主要讲，如何让测试用例跑起来，并且辅助我们解决看不懂的地方。  </p>
+<h2 id="是骡子是马，牵出来溜溜"><a href="#是骡子是马，牵出来溜溜" class="headerlink" title="是骡子是马，牵出来溜溜"></a>是骡子是马，牵出来溜溜</h2><p>熟悉一个源码/工具的方法就是让它跑起来，更快速的熟悉一个源码/工具的方法就是让它的测试用例跑起来。<br>先到根目录安装下包<br><code>npm i</code>  </p>
+<p>再运行下 <code>reactive</code> 的测试用例<br><code>jest packages/reactivity/__tests__/reactive.spec.ts</code>  </p>
+<p>命令行输出了让人赏心悦目的结果。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">PASS  packages/reactivity/__tests__/reactive.spec.ts</span><br><span class="line"> reactivity/reactive</span><br><span class="line">   ✓ Object (6ms)</span><br><span class="line">   ✓ Array (1ms)</span><br><span class="line">   ✓ cloned reactive Array should point to observed values (1ms)</span><br><span class="line">   ✓ nested reactives (5ms)</span><br><span class="line">   ✓ observed value should proxy mutations to original (Object) (1ms)</span><br><span class="line">   ✓ observed value should proxy mutations to original (Array) (1ms)</span><br><span class="line">   ✓ setting a property with an unobserved value should wrap with reactive</span><br><span class="line">   ✓ observing already observed value should return same Proxy (1ms)</span><br><span class="line">   ✓ observing the same value multiple times should return same Proxy</span><br><span class="line">   ✓ should not pollute original object with Proxies</span><br><span class="line">   ✓ unwrap (1ms)</span><br><span class="line">   ✓ non-observable values (1ms)</span><br><span class="line">   ✓ markNonReactive (1ms)</span><br></pre></td></tr></table></figure>
+<h2 id="包罗万象"><a href="#包罗万象" class="headerlink" title="包罗万象"></a>包罗万象</h2><p>为什么要从测试用例看源码呢，因为它就像我们的产品经理，它会告诉我们输入什么，预期什么。它会考虑边界情况，基本上源码难懂的地方都是边界情况，所以这个阶段，我们可以跑用例来理解。</p>
+<p>为了支持单个测试用例运行，在 Vscode 商店中安装<br><code>Jest-Runner</code> 插件，这个插件可以让我们更简单的运行用例和调试。以下是它的用法。  </p>
+<p><img src="https://raw.githubusercontent.com/firsttris/vscode-jest-runner/master/public/vscode-jest.gif" alt></p>
+<p>我们先选一个测试用例，花几分钟，看看jest的基本用法。<br>这里我选择了 <code>reactive.spec.js</code> 用例文件。  </p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; reactive, isReactive</span><br><span class="line">  , toRaw, markNonReactive </span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">'../src/reactive'</span></span><br><span class="line"><span class="keyword">import</span> &#123; mockWarn &#125; <span class="keyword">from</span> <span class="string">'@vue/runtime-test'</span></span><br><span class="line">test(<span class="string">'Object'</span>, <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> original = &#123; foo: <span class="number">1</span> &#125;</span><br><span class="line">  <span class="comment">// 用 reactive 包装 original，original变成了响应式数据</span></span><br><span class="line">  <span class="keyword">const</span> observed = reactive(original)</span><br><span class="line">  <span class="comment">// 这句很明显了吧，observed 不等于 original</span></span><br><span class="line">  expect(observed).not.toBe(original)</span><br><span class="line">  <span class="comment">// observed 是响应式数据</span></span><br><span class="line">  expect(isReactive(observed)).toBe(<span class="literal">true</span>)</span><br><span class="line">  <span class="comment">// original 不是响应式数据</span></span><br><span class="line">  expect(isReactive(original)).toBe(<span class="literal">false</span>)</span><br><span class="line">  <span class="comment">// 通过响应数据 observed 拿到的值与原数据相等</span></span><br><span class="line">  expect(observed.foo).toBe(<span class="number">1</span>)</span><br><span class="line">  <span class="comment">// foo 这个key 值，存在于 observed 中</span></span><br><span class="line">  expect(<span class="string">'foo'</span> <span class="keyword">in</span> observed).toBe(<span class="literal">true</span>)</span><br><span class="line">  <span class="comment">// observed 的健集合与原数据相等，toEqual 是深度比较，它会比较值，而非地址</span></span><br><span class="line">  expect(<span class="built_in">Object</span>.keys(observed)).toEqual([<span class="string">'foo'</span>])</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>读懂 Jest 语法就和读懂白话文的难度一样吧。你可以看到 test 的第一个参数是语义化的，基本上能通过这个参数，猜出每个用例想干什么，我们将 <code>reactive.spec.js</code>中的参数 列举出来。  </p>
+<ul>
+<li>Object</li>
+<li>Array</li>
+<li>cloned reactive Array should point to observed values</li>
+<li>nested reactives  </li>
+<li>observed value should proxy mutations to original (Object)</li>
+<li>observed value should proxy mutations to original (Array)</li>
+<li>setting a property with an unobserved value should wrap with reactive</li>
+<li>observing already observed value should return same Proxy</li>
+<li>observing the same value multiple times should return same Proxy</li>
+<li>should not pollute original object with Proxies</li>
+<li>unwrap</li>
+<li>non-observable values</li>
+<li>markNonReactive  </li>
+</ul>
+<p>到此为止，接下来我们再跳入代码中，寻找上个文章中留下的问题。</p>
+<h2 id="优化！优化！还是TMD优化！"><a href="#优化！优化！还是TMD优化！" class="headerlink" title="优化！优化！还是TMD优化！"></a>优化！优化！还是TMD优化！</h2><blockquote>
+<p><code>在 reactive.ts</code> 中的 <code>createReactiveObject</code> 方法里，为什么要 <code>set</code> 两次 <code>toProxy.set(target, observed)
+  toRaw.set(observed, target)</code>  </p>
+</blockquote>
+<p>首先看这两个对象是如何消耗的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// target already has corresponding Proxy</span><br><span class="line">  let observed = toProxy.get(target)</span><br><span class="line">  if (observed !== void 0) &#123;</span><br><span class="line">    return observed</span><br><span class="line">  &#125;</span><br><span class="line">  // target is already a Proxy</span><br><span class="line">  if (toRaw.has(target)) &#123;</span><br><span class="line">    return target</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>很明显，这两个<code>Set</code>是用来优化代码用的，当 target 存在于时，返回即可。不同的是 toProxy 的key值为 target，toRaw 的 key 值 为 observed。  </p>
+<p>大胆猜测下，假如 createReactiveObject 运行了两次，第二次的 target 恰好是 第一次包装后的 observed。  </p>
+<p>如果是以上情况，那测试用例肯定存在这种情况。稍微看一眼就是这个case： <code>observing already observed value should return same Proxy</code><br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">test(<span class="string">'observing already observed value should return same Proxy'</span>, <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> original = &#123; foo: <span class="number">1</span> &#125;</span><br><span class="line">    <span class="keyword">const</span> observed = reactive(original)</span><br><span class="line">    <span class="keyword">const</span> observed2 = reactive(observed)</span><br><span class="line">    expect(observed2).toBe(observed)</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>该用例将包装好的 observed 再次作为参数传给了 reactive。<br>我们把断点打上。验证猜想。<br>当 reactive 运行第二次，到 toRaw 判断语句的时候便返回了。<br><img src="https://user-gold-cdn.xitu.io/2019/10/11/16db898d631f1948?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt><br>到这里，为什么 reactive 内部会 set 两次的原因已经清晰了：为了优化包装后的对象再次被传入的情况，防止多次proxy。<br>以上，是通过测试用例分析的过程。我们再看看其他用例。  </p>
+<h2 id="令人困扰的-Ref"><a href="#令人困扰的-Ref" class="headerlink" title="令人困扰的 Ref"></a>令人困扰的 Ref</h2><p>上一篇我们是从 <code>Ref</code> 开始阅读源码的，只是大体顺了下来，知道了 <code>Ref</code> 对象是怎么创建的，以及它的 <code>get</code>、<code>set</code> 过程。之后，我们看到 <code>reactive.ts</code>，知道它是响应式的核心，并且实现了一个简单的demo，那 <code>Ref</code> 存在的意义是什么？  </p>
+<p>相信我，此时此刻我和你一样困惑。让我们打开 <code>ref.spec.ts</code> 测试用例看看他会告诉我们什么。<br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">it(<span class="string">'should hold a value'</span>, <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> a = ref(<span class="number">1</span>)</span><br><span class="line">  expect(a.value).toBe(<span class="number">1</span>)</span><br><span class="line">  a.value = <span class="number">2</span></span><br><span class="line">  expect(a.value).toBe(<span class="number">2</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>第一个测试用例就给 ref 传入一个基本类型<code>number</code>。那就该想到，<code>reactive</code> 传入基本类型会怎么样？<br>让我们试试！在 <code>reactive.ts</code> 编写对应测试用例。<br><img src="https://user-gold-cdn.xitu.io/2019/10/11/16db898d64577081?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt><br>Typescript 的优势体现出来了，入参只支持对象，不支持基本类型！<br><code>reactive.ts</code> 核心api 是 Proxy，Proxy 的传参只能是对象。如果传基本类型的话，会console  </p>
+<p><code>Cannot create proxy with a non-object as target or handler
+    at proxyMethod</code><br>所以，ref 是为了使基本类型也能成为响应式数据存在的，让我们回到第一个测试用例: <code>should hold a value</code><br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> convert = (val: <span class="built_in">any</span>): <span class="function"><span class="params">any</span> =&gt;</span> (isObject(val) ? reactive(val) : val)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">ref</span>&lt;<span class="title">T</span>&gt;(<span class="params">raw: T</span>): <span class="title">Ref</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">  <span class="comment">// 如果是对象，则用 reactive 方法 包装 raw</span></span><br><span class="line">  raw = convert(raw)</span><br><span class="line">  <span class="comment">// 返回一个 v 对象，在 取value 值时，调用 track 方法，在存 value 值时，调用 trigger方法</span></span><br><span class="line">  <span class="keyword">const</span> v = &#123;</span><br><span class="line">    [refSymbol]: <span class="literal">true</span>,</span><br><span class="line">    <span class="keyword">get</span> value() &#123;</span><br><span class="line">      track(v, OperationTypes.GET, <span class="string">''</span>)</span><br><span class="line">      <span class="keyword">return</span> raw</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="keyword">set</span> value(newVal) &#123;</span><br><span class="line">      raw = convert(newVal)</span><br><span class="line">      trigger(v, OperationTypes.SET, <span class="string">''</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> v <span class="keyword">as</span> Ref&lt;T&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果 ref 入参是基本类型的话，这个函数就很容易看懂了，返回值是一个被包装过的对象。这个对象在 <code>get</code> 时调用 <code>track</code> 方法，在 <code>set</code>时，调用 <code>trigger</code> 方法走更新 <code>view</code> 层逻辑。因此它是通过这种方式，实现基本类型的数据绑定的。</p>
+<p>为了对 ref 有更详细的认识，我们需要更复杂的的用例。  </p>
+<p>我截取了一部分 <code>toRefs</code> 的用例，这部分代码不依赖其他模块。<br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">test(<span class="string">'toRefs'</span>, <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> a = reactive(&#123;</span><br><span class="line">      x: <span class="number">1</span>,</span><br><span class="line">      y: <span class="number">2</span></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> &#123; x, y &#125; = toRefs(a)</span><br><span class="line"></span><br><span class="line">    expect(isRef(x)).toBe(<span class="literal">true</span>)</span><br><span class="line">    expect(isRef(y)).toBe(<span class="literal">true</span>)</span><br><span class="line">    expect(x.value).toBe(<span class="number">1</span>)</span><br><span class="line">    expect(y.value).toBe(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// source -&gt; proxy</span></span><br><span class="line">    a.x = <span class="number">2</span></span><br><span class="line">    a.y = <span class="number">3</span></span><br><span class="line">    expect(x.value).toBe(<span class="number">2</span>)</span><br><span class="line">    expect(y.value).toBe(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// proxy -&gt; source</span></span><br><span class="line">    x.value = <span class="number">3</span></span><br><span class="line">    y.value = <span class="number">4</span></span><br><span class="line">    expect(a.x).toBe(<span class="number">3</span>)</span><br><span class="line">    expect(a.y).toBe(<span class="number">4</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这个用例是来测试 toRefs 方法的。<br>如果用例没有 <code>toRefs(a)</code>，而是<br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; x, y &#125; = reactive(&#123;</span><br><span class="line">  x: <span class="number">1</span>,</span><br><span class="line">  y: <span class="number">2</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>毫无疑问，<code>x</code> 和 <code>y</code> 不是响应式的，二者都是基本类型。我们期望它是响应式数据，所以需要转化成 Ref 对象。视线再转回 <code>ref.ts</code><br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">toRefs</span>&lt;<span class="title">T</span> <span class="title">extends</span> <span class="title">object</span>&gt;(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">  object: T</span></span></span><br><span class="line"><span class="function"><span class="params"></span>): </span>&#123; [K <span class="keyword">in</span> keyof T]: Ref&lt;T[K]&gt; &#125; &#123;</span><br><span class="line">  <span class="keyword">const</span> ret: <span class="built_in">any</span> = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> object) &#123;</span><br><span class="line">    ret[key] = toProxyRef(object, key)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">toProxyRef</span>&lt;<span class="title">T</span> <span class="title">extends</span> <span class="title">object</span>, <span class="title">K</span> <span class="title">extends</span> <span class="title">keyof</span> <span class="title">T</span>&gt;(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">  object: T,</span></span></span><br><span class="line"><span class="function"><span class="params">  key: K</span></span></span><br><span class="line"><span class="function"><span class="params"></span>): <span class="title">Ref</span>&lt;<span class="title">T</span>[<span class="title">K</span>]&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    [refSymbol]: <span class="literal">true</span>,</span><br><span class="line">    <span class="keyword">get</span> value(): <span class="built_in">any</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> object[key]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="keyword">set</span> value(newVal) &#123;</span><br><span class="line">      object[key] = newVal</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>奇怪，前面的 <code>toRefs</code> 可以看懂，遍历了 object，并用 <code>toProxyRef</code> 包装后重新赋值。 但 <code>toProxyRef</code> 内部，仅仅用 <code>get</code> <code>set</code> 包装下，没有我们可爱的 <code>trigger</code> 和 <code>track</code>，这是为什么的？  </p>
+<p>因为 object 本身就是响应式数据。   </p>
+<p>其实这里只需要用存取器包装成对象，让基本类型变为引用类型，当执行 <code>expect(x.value).toBe(1)</code> 时，会调用 <code>object[key]</code>，所以它也会触发 object 的 <code>get</code> 方法。  </p>
+<p>同样的，当执行 <code>x.value = 3</code> 语句时，会调用 <code>set</code> 方法，执行 <code>object[key] = newVal</code> 后也会触发 object 的 <code>set</code> 方法。  </p>
+<blockquote>
+<p>其实 <code>toRefs</code> 解决的问题就是，开发者在函数中错误的解构 reactive，来返回基本类型。  <code>const { x, y } = = reactive({ x: 1, y: 2 })</code>，这样会使 <code>x</code>, <code>y</code> 失去响应式，于是官方提出了 <code>toRefs</code> 方案，在函数返回时，将 <code>reactive</code> 转为 refs，来避免这种情况。  </p>
+</blockquote>
+<h2 id="到此为止"><a href="#到此为止" class="headerlink" title="到此为止"></a>到此为止</h2><p>如果我们接着探究的话，不得不涉及到其他模块，比如 <code>computed</code> <code>effect</code>……, 而这块儿又有些庞大，只能后续更新，所以 <code>ref</code> 和 <code>reactive</code> 部分探究到此为止。</p>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><blockquote>
+<p>vue-next 的源码正在不断更新中，小伙伴们在看源码的过程中，要时不时pull一下，防止源码版本滞后呦……</p>
+</blockquote>
+<p>从单测看起的灵感来自： <a href="https://juejin.im/post/5d9c9a135188252e097569bd" target="_blank" rel="noopener">Vue3响应式系统源码解析(上)</a>，老规矩，先点赞。</p>
+<p>我会持续更新，敬请关注。😁 (千万别关注我呦)</p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#先唠会儿嗑"><span class="toc-number">1.</span> <span class="toc-text">先唠会儿嗑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#是骡子是马，牵出来溜溜"><span class="toc-number">2.</span> <span class="toc-text">是骡子是马，牵出来溜溜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#包罗万象"><span class="toc-number">3.</span> <span class="toc-text">包罗万象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化！优化！还是TMD优化！"><span class="toc-number">4.</span> <span class="toc-text">优化！优化！还是TMD优化！</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#令人困扰的-Ref"><span class="toc-number">5.</span> <span class="toc-text">令人困扰的 Ref</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#到此为止"><span class="toc-number">6.</span> <span class="toc-text">到此为止</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#未完待续"><span class="toc-number">7.</span> <span class="toc-text">未完待续</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

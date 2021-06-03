@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>怒了，上 Docker | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>怒了，上 Docker</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2010/10/12</time>
+            
+            
+          </div>
+          <p>环境使人头大  </p>
+<h2 id="node-版本管理包-n"><a href="#node-版本管理包-n" class="headerlink" title="node 版本管理包 n"></a>node 版本管理包 n</h2><p>n 这个玩意儿好用是好用，但会导致很多问题，比如常见的 <code>npm list</code>，它会破坏 node 的全局环境，它会让我维护的一个 vscode 插件无法发布，在我尝试了两三个小时修复后(重复卸载安装node)，我决定放弃，还是创建一个干净的环境来发布吧……</p>
+<h1 id="Docker-显然不错"><a href="#Docker-显然不错" class="headerlink" title="Docker 显然不错"></a>Docker 显然不错</h1><p>mac 获取 Docker  </p>
+<p><a href="https://hub.docker.com/" target="_blank" rel="noopener">https://hub.docker.com/</a>  </p>
+<p>你需要注册登录并下载安装(一顿操作猛如虎,过程就忽略了)<br>安装完毕后，运行下 <code>docker -v</code><br><code>Docker version 19.03.2, build 6a30dfc</code><br>说明安装成功了，进行下一步。</p>
+<h1 id="Docker-简介"><a href="#Docker-简介" class="headerlink" title="Docker 简介"></a>Docker 简介</h1><blockquote>
+<p>小A：Docker 是啥呀，你就让我安装了，它凭啥能创建一个干净的环境呢？ </p>
+</blockquote>
+<blockquote>
+<p>我： docker的整个生命周期有三部分组成：镜像（image）+容器（container）+仓库（repository)，容器是镜像实例化来的，这里类比为 类 的实例化。这就好理解了吧，类实例化后的对象是互不干扰的，容器也是。  </p>
+</blockquote>
+<p>让我们先下载一个镜像吧。<br><code>docker pull ubuntu</code><br>镜像下载后，先创建个容器并打开<br><code>sudo docker run -it ubuntu bash</code><br>用sudo 防止后面下载nodejs时不成功<br>打开后，运行 <code>ls</code> 命令。<br><code>bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var</code><br>看来已经创建好并打开了。  </p>
+<p>接下来下载安装 nodejs。<br>先更新下下载源： <code>apt-get update</code><br>下载node<br> <code>apt-get install nodejs</code><br> <code>apt-get install npm</code></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#node-版本管理包-n"><span class="toc-number">1.</span> <span class="toc-text">node 版本管理包 n</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker-显然不错"><span class="toc-number"></span> <span class="toc-text">Docker 显然不错</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker-简介"><span class="toc-number"></span> <span class="toc-text">Docker 简介</span></a>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

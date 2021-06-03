@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>Github Actions | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Github Actions</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/08/11</time>
+            
+            
+          </div>
+          <p>从CI/CD到Gihtub Actions</p>
+<h2 id="GitHub-Actions"><a href="#GitHub-Actions" class="headerlink" title="GitHub Actions"></a>GitHub Actions</h2><p>这是 Github 正在内测的一个功能，目前我还不知道它具体是干啥的，只看到了 Github 右侧边栏打的广告  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GitHub Actions beta, now with CI/CD</span><br><span class="line">Automate any workflow with GitHub Actions. See the latest updates and register for the beta.</span><br></pre></td></tr></table></figure>
+<p>管他干啥的，先申请内测。<br>于是……<br><img src="https://s2.ax1x.com/2019/08/11/ev3711.png" alt="内测ing">  </p>
+<h2 id="CI-CD"><a href="#CI-CD" class="headerlink" title="CI/CD"></a>CI/CD</h2><p>既然要等待，不如先了解下它是干啥的，首先我看到了 CI/CD，那就先了解下这两个概念吧。  </p>
+<h3 id="CI"><a href="#CI" class="headerlink" title="CI"></a>CI</h3><p>持续集成（Continuous Integration，CI）是一种软件开发实践。在持续集成中，团队成员频繁集成他们的工作成果，一般每人每天至少集成一次，也可以多次。每次集成会经过自动构建（包括静态扫描、安全扫描、自动测试等过程）的检验，以尽快发现集成错误。许多团队发现这种方法可以显著减少集成引起的问题，并可以加快团队合作软件开发的速度（以上引用自Martin Fowler 对持续集成的定义）。  </p>
+<blockquote>
+<p>人话：持续集成其实就是在代码提交后，进行自动化测试等操作，这样的话，你需要准备编写大量的测试用例，只有测试用例通过的时候，代码才允许走到下一个环节。所以你需要准备一个服务器(也可以是本地)，当代码提交的时候，去跑这些测试用例。</p>
+</blockquote>
+<h3 id="CD"><a href="#CD" class="headerlink" title="CD"></a>CD</h3><p>持续交付（Continuous Delivery）是指频繁地将软件的新版本交付给质量团队或者用户，以供评审，如果评审通过，代码就进入生产阶段。  </p>
+<blockquote>
+<p>人话：持续交付接近我们现在的工作流，实在完成 CI 的基础上，对于发布流程进行的优化。当我们通过测试用例后，我们需要将代码发布到测试环境给QA人员进行评审（测试）。评审通过，我们可以通过 发布系统/dxy-matrix 触发项目的发布线上的流程。  </p>
+</blockquote>
+<p>持续部署（Continuous Deployment）是持续交付的下一步，指的是代码通过评审以后，自动部署到生产环境中。</p>
+<blockquote>
+<p>人话：持续部署是在持续交付的下一环节，想象一下，当我们通过了自动化测试，通过了QA，那是不是意味着，代码已经可以发线上了，我们连 触发 发布这个动作都不需要了，当我们将分支 push 到 master 的时候，CD 帮我们自动发布到线上。每一次改动都会直接和用户见面。线上有bug，我们可以迅速修掉。</p>
+</blockquote>
+<h3 id="CI-CD-1"><a href="#CI-CD-1" class="headerlink" title="CI/CD"></a>CI/CD</h3><p><img src="https://pic4.zhimg.com/80/v2-958984fefb4525db84839cdc619294bf_hd.jpg" alt="图"></p>
+<h3 id="Github-Action"><a href="#Github-Action" class="headerlink" title="Github Action"></a>Github Action</h3><p>现在是 09.01，终于拿到了 Github Action的内测机会。<br><img src="https://img1.dxycdn.com/2019/0901/932/3365698690744026875-2.png" alt></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GitHub-Actions"><span class="toc-number">1.</span> <span class="toc-text">GitHub Actions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CI-CD"><span class="toc-number">2.</span> <span class="toc-text">CI/CD</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CI"><span class="toc-number">2.1.</span> <span class="toc-text">CI</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CD"><span class="toc-number">2.2.</span> <span class="toc-text">CD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CI-CD-1"><span class="toc-number">2.3.</span> <span class="toc-text">CI/CD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Github-Action"><span class="toc-number">2.4.</span> <span class="toc-text">Github Action</span></a></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

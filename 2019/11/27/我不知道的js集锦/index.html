@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>我不知道的js | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>我不知道的js</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/11/27</time>
+            
+            
+          </div>
+          <p>整理一些没用过的 api</p>
+<hr>
+<h2 id="语法篇"><a href="#语法篇" class="headerlink" title="语法篇"></a>语法篇</h2><h3 id="Array-flat-💋"><a href="#Array-flat-💋" class="headerlink" title="Array.flat 💋"></a>Array.flat 💋</h3><p>扁平化遍历数组  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">23</span>, [<span class="number">4</span>,<span class="number">5</span>], [<span class="number">4</span>, [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]]].flat()</span><br><span class="line"><span class="comment">// (5) [23, 4, 5, 4, Array(3)]</span></span><br><span class="line">[<span class="number">23</span>, [<span class="number">4</span>,<span class="number">5</span>], [<span class="number">4</span>, [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]]].flat(<span class="number">1</span>)</span><br><span class="line"><span class="comment">// [23, 4, 5, 4, 3, 4, 5]</span></span><br></pre></td></tr></table></figure>
+<p>参数代表了要遍历的深度</p>
+<h3 id="迭代器💋"><a href="#迭代器💋" class="headerlink" title="迭代器💋"></a>迭代器💋</h3><p>Symbol.iterator是迭代器属性<br>以下数据类型有迭代器属性： <code>Array</code> <code>Set</code> <code>Map</code> <code>String</code> <code>arguments</code><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> it = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>][<span class="built_in">Symbol</span>.itertaor]</span><br><span class="line">it.next() <span class="comment">// &#123;value:1, done: false&#125;</span></span><br><span class="line">it.next() <span class="comment">// &#123;value:2, done: false&#125;</span></span><br><span class="line">it.next() <span class="comment">// &#123;value:3, done: false&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>也可以用 <code>for...of</code> 来遍历  </p>
+<h4 id="我想遍历对象怎么办？💋"><a href="#我想遍历对象怎么办？💋" class="headerlink" title="我想遍历对象怎么办？💋"></a>我想遍历对象怎么办？💋</h4><p>以下都返回一个迭代器对象<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.keys() <span class="comment">// key</span></span><br><span class="line"><span class="built_in">Object</span>.values()  <span class="comment">// value</span></span><br><span class="line"><span class="built_in">Object</span>.entries() <span class="comment">//[key, value]</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="生成器💋"><a href="#生成器💋" class="headerlink" title="生成器💋"></a>生成器💋</h3><p>其实就是 <code>generator</code> 函数啦。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生成器</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> *<span class="title">createIterator</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 生成器能像正规函数那样被调用，但会返回一个迭代器</span></span><br><span class="line"><span class="keyword">let</span> iterator = createIterator();</span><br><span class="line"><span class="built_in">console</span>.log(iterator.next().value); <span class="comment">// 1</span></span><br><span class="line"><span class="built_in">console</span>.log(iterator.next().value); <span class="comment">// 2</span></span><br><span class="line"><span class="built_in">console</span>.log(iterator.next().value); <span class="comment">// 3</span></span><br></pre></td></tr></table></figure></p>
+<p>惊不惊喜，意不意外，跟迭代器对象调用如此之像，它也可以被迭代。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> a <span class="keyword">of</span> createIterator) &#123; <span class="built_in">console</span>.log(a) &#125;</span><br></pre></td></tr></table></figure></p>
+<p>它还是异步解决方案的一种，遇到 yield 时，会中止函数的执行，此时可以执行相关回调。但由于执行它太麻烦，要有一个允许 gen 方法执行的 chunk 函数。</p>
+<h3 id="Set结构💋"><a href="#Set结构💋" class="headerlink" title="Set结构💋"></a>Set结构💋</h3><p>类似于数组，但其内部成员是不可重复的，可以用来去重（或比较两个数字，NaN在它这里是相等的）<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Array</span>.form(<span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">4</span>]))</span><br><span class="line"><span class="comment">// [2,3,4]</span></span><br></pre></td></tr></table></figure></p>
+<p>方法有 <code>add\has\delete\clear</code>  </p>
+<p><code>set.size</code> 可以得到 <code>length</code>  </p>
+<p><code>Array.from</code> 和 <code>...</code> 可以将其转为 数组。<br>它可以遍历  </p>
+<h4 id="weakSet💋"><a href="#weakSet💋" class="headerlink" title="weakSet💋"></a>weakSet💋</h4><p>绝大多数 GC 机制都采取标记清除的方式，简单来说当变量被设置为 null 或者其所处的函数的生命周期结束时，会被 GC 回收掉。而 weakSet 储存一个对象时，不会被标记引用。比如以下代码  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> <span class="keyword">set</span> = new Set()</span><br><span class="line"><span class="keyword">set</span>.add(obj)</span><br><span class="line">obj = null</span><br><span class="line"><span class="keyword">set</span> // [&#123;&#125;]</span><br><span class="line"><span class="comment">// 分割</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> <span class="keyword">set</span> = new WeakSet()</span><br><span class="line"><span class="keyword">set</span>.add(obj)</span><br><span class="line">obj = null</span><br><span class="line"><span class="keyword">set</span> // []</span><br></pre></td></tr></table></figure>
+<p>当 Set 储存值时，被 GC 机制标记引用，即使将值设置为 null，但 set 中嗨保存一份 “副本”，值仍然存在。<br>而 weakMap 储存值时，GC 机制不会标记该值的引用，当值设置为 null 时，理所当然的被回收了。</p>
+<h3 id="Map-结构-💋"><a href="#Map-结构-💋" class="headerlink" title="Map 结构  💋"></a>Map 结构  💋</h3><p>与 <code>Set</code> 不同，<code>Map</code> 储存健值对<br>api 是 `set\get\has\delete\clear<br>Map 的健值可以是对象，其他也没有啥好说的  </p>
+<h4 id="weakMap-对象💋"><a href="#weakMap-对象💋" class="headerlink" title="weakMap 对象💋"></a>weakMap 对象💋</h4><p>跟 weakSet 相同，不需要赘述了</p>
+<h3 id="双向绑定的两种实现方法💋"><a href="#双向绑定的两种实现方法💋" class="headerlink" title="双向绑定的两种实现方法💋"></a>双向绑定的两种实现方法💋</h3><p><code>Object.definePrototype</code><br><code>Proxy</code>  </p>
+<h3 id="Reflect💋"><a href="#Reflect💋" class="headerlink" title="Reflect💋"></a>Reflect💋</h3><h4 id="为什么要引入-Reflect"><a href="#为什么要引入-Reflect" class="headerlink" title="为什么要引入 Reflect"></a>为什么要引入 Reflect</h4><ul>
+<li>将Object 的方法和属性移植过来</li>
+<li>将部分操作由报错变为返回一个 bool 值，Reflect.definePorperty  </li>
+<li>将命令式语句改为方法调用，key in obj -&gt; Reflect.has(obj, key)</li>
+<li>确保对象的原生行为能准确运行。比如Vue 3.0中 Reflect.set<h4 id="API"><a href="#API" class="headerlink" title="API"></a>API</h4></li>
+<li><code>Reflect.set(target, key, val, receiver)</code> receiver 是Proxy 的实例，会触发 defineProperty 钩子</li>
+<li><code>Reflect.get(target, key ,val)</code></li>
+<li><code>Reflect.has(target, key)</code> 会从原型链找</li>
+<li><code>Reflect.deleteProperty(obj, key)</code> 删除属性</li>
+<li><code>Reflect.construct(target, [args])</code> 实例化 target -&gt; <code>new target(args)</code></li>
+<li><code>Reflect.getPrototypeOf(obj)</code> 得到原型链</li>
+<li><code>Reflect.setPrototypeOf(obj, key ,val)</code> 设置原型链</li>
+<li><code>Reflect.apply(fn, this, args)</code> 对应 <code>fn.apply(this, args)</code></li>
+<li><code>Reflect.ownKeys(obj)</code> 返回对象的属性，包括 Symbol 作为健值，不包括原型链，<h3 id="Proxy"><a href="#Proxy" class="headerlink" title="Proxy"></a>Proxy</h3><h3 id="Array-prototype-sort-的回调参数"><a href="#Array-prototype-sort-的回调参数" class="headerlink" title="Array.prototype.sort 的回调参数"></a>Array.prototype.sort 的回调参数</h3>回调函数返回值小于 0，从小到大，大于0，从大到小，等于0，不变<h3 id="Promise-实现原理"><a href="#Promise-实现原理" class="headerlink" title="Promise 实现原理"></a>Promise 实现原理</h3><h3 id="async-await-实现原理"><a href="#async-await-实现原理" class="headerlink" title="async await 实现原理"></a>async await 实现原理</h3><h3 id="0-1-0-2-0-3吗💋"><a href="#0-1-0-2-0-3吗💋" class="headerlink" title="0.1+0.2===0.3吗💋"></a>0.1+0.2===0.3吗💋</h3>不等于，js的浮点数用分数表示，比如 0.5 可以用 1 / 2^1 表示，但 0.1 和 0.2 表示不了，只能近似相等，0.30000000000000004。<h3 id="观察者模式-订阅模式-中介者模式"><a href="#观察者模式-订阅模式-中介者模式" class="headerlink" title="观察者模式 订阅模式 中介者模式"></a>观察者模式 订阅模式 中介者模式</h3><h4 id="观察者模式💋"><a href="#观察者模式💋" class="headerlink" title="观察者模式💋"></a>观察者模式💋</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> beObserve = &#123;</span><br><span class="line">  name: <span class="string">'duhao'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> name = <span class="string">''</span></span><br><span class="line"><span class="built_in">Object</span>.definePorperty(beObserve, <span class="string">'name'</span>, &#123;</span><br><span class="line">  <span class="keyword">set</span>(val) &#123;</span><br><span class="line">    observe(beObserve, name, val)</span><br><span class="line">    beObserve.name = name = val</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">observe</span>(<span class="params">beObserve, oldVal, name</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="发布订阅模式💋"><a href="#发布订阅模式💋" class="headerlink" title="发布订阅模式💋"></a>发布订阅模式💋</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EventEmiter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>() &#123;</span><br><span class="line">    <span class="keyword">this</span>.list = <span class="keyword">new</span> <span class="built_in">Map</span>()</span><br><span class="line">  &#125;,</span><br><span class="line">  addListener(evt, callback) &#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.list.has(evt)) &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.list.set(evt, callback)</span><br><span class="line">  &#125;,</span><br><span class="line">  removeListener(evt) &#123;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">this</span>.list.has(evt)) &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.list.delete(evt)</span><br><span class="line">  &#125;,</span><br><span class="line">  trigger(msg) &#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> obj <span class="keyword">of</span> <span class="built_in">Object</span>.keys(<span class="keyword">this</span>.list)) &#123;</span><br><span class="line">      <span class="keyword">if</span>(obj === msg.type) &#123;</span><br><span class="line">        <span class="keyword">this</span>.list.get(obj)(msg)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> events = <span class="keyword">new</span> EventEmiter()</span><br><span class="line"><span class="keyword">const</span> obj = <span class="string">'click'</span></span><br><span class="line">events.addListener(obj, obj.doSomething)</span><br><span class="line">events.trigger(&#123;<span class="attr">type</span>: <span class="string">'click'</span>,<span class="attr">msg</span>: <span class="string">'hello'</span>&#125;)</span><br></pre></td></tr></table></figure>
+<h4 id="中介者模式-💋"><a href="#中介者模式-💋" class="headerlink" title="中介者模式  💋"></a>中介者模式  💋</h4><p>举个例子就好了，比如枪战游戏，每个角色在打出一枪后，其他角色要校验自身是否中枪，这样比较耦合，现在，设置一个中心，由他来判断谁开枪了，谁中枪了。  </p>
+<h4 id="ParseInt"><a href="#ParseInt" class="headerlink" title="ParseInt"></a>ParseInt</h4><p>ParseInt 有两个参数，第一个参数是字符串，第二个参数是由 2 - 16 的整数。<br>第二个参数是可选的，但如果不在 2 - 36之间，会返回NAN。如果第一个参数的首位字符串大于第二个参数，也会返回NAN，因为其不能被第二个参数所表示。<br><code>parseInt(10, 2)</code><br>这表示着  <code>1 * Math.pow(2, 1) + 0 * Math.pow(2, 0)</code></p>
+<hr>
+<h2 id="浏览器原理篇"><a href="#浏览器原理篇" class="headerlink" title="浏览器原理篇"></a>浏览器原理篇</h2><h3 id="路由的history"><a href="#路由的history" class="headerlink" title="路由的history"></a>路由的history</h3><h3 id="内存泄漏-💋"><a href="#内存泄漏-💋" class="headerlink" title="内存泄漏  💋"></a>内存泄漏  💋</h3><ul>
+<li>未关闭的定时器  </li>
+<li>循环引用  </li>
+<li>alert(‘dfsf’.length)</li>
+<li>dom 节点未删除  </li>
+<li>闭包内不用的变量  </li>
+</ul>
+<h3 id="Rem-物理像素-css像素"><a href="#Rem-物理像素-css像素" class="headerlink" title="Rem 物理像素 css像素"></a>Rem 物理像素 css像素</h3><h3 id="高清屏解决方案-💋"><a href="#高清屏解决方案-💋" class="headerlink" title="高清屏解决方案 💋"></a>高清屏解决方案 💋</h3><p>在高清屏手机上，常常多个物理像素代表一个 css 像素，造成了 border: 1px 看起来很粗，过不了设计师这一关，可以通过伪元素设置 1px，然后transform: scale(.5)，然后居中解决；</p>
+<h3 id="浏览器缓存策略"><a href="#浏览器缓存策略" class="headerlink" title="浏览器缓存策略"></a>浏览器缓存策略</h3><hr>
+<h2 id="网络篇"><a href="#网络篇" class="headerlink" title="网络篇"></a>网络篇</h2><h3 id="网络模型-💋"><a href="#网络模型-💋" class="headerlink" title="网络模型  💋"></a>网络模型  💋</h3><ul>
+<li>应用层 HTTP/FTP</li>
+<li>表现层</li>
+<li>会话层</li>
+<li>传输层 TCP/UPD</li>
+<li>网络层 IP</li>
+<li>数据链路层 以太网</li>
+<li>物理层 光纤 网线  </li>
+</ul>
+<h3 id="HTTP-Keep-Alive-💋"><a href="#HTTP-Keep-Alive-💋" class="headerlink" title="HTTP Keep-Alive  💋"></a>HTTP Keep-Alive  💋</h3><p>HTTP 一次链接是昂贵的，TCP 三次握手,四次挥手、冗长的请求头。如果能复用一个 TCP 通道，能节省更多资源，在请求头和返回头中 加入 <code>Connection: Keep-Alive</code>，使 TCP 通道不会关闭。多个请求可以复用一个TCP链接。但必须是有顺序的。<br>缺点：1，请求的返回遵循队列原则，如果第一个请求响应慢了，后面的请求会阻塞。2，服务端压力变大。</p>
+<h3 id="http2的多路复用-💋"><a href="#http2的多路复用-💋" class="headerlink" title="http2的多路复用 💋"></a>http2的多路复用 💋</h3><p>http1.0的问题</p>
+<ul>
+<li>1，相同域名下的不同资源，要发多次请求，每次请求都要经过TCP三次握手，浪费时间。（虽然Keep-alive可以解决这个问题，）</li>
+<li>2，请求头过大</li>
+<li>3，没有服务端推送</li>
+</ul>
+<p>http2 引入流的概念，同一域名只建立一个http请求。压缩了请求头，引入了服务端推送。</p>
+<h3 id="https-💋"><a href="#https-💋" class="headerlink" title="https   💋"></a>https   💋</h3><p>第一步，爱丽丝给出协议版本号、一个客户端生成的随机数（Client random），以及客户端支持的加密方法。</p>
+<p>第二步，鲍勃确认双方使用的加密方法，并给出数字证书、以及一个服务器生成的随机数（Server random）。</p>
+<p>第三步，爱丽丝确认数字证书有效，然后生成一个新的随机数（Premaster secret），并使用数字证书中的公钥，加密这个随机数，发给鲍勃。</p>
+<p>第四步，鲍勃使用自己的私钥，获取爱丽丝发来的随机数（即Premaster secret）。</p>
+<p>第五步，爱丽丝和鲍勃根据约定的加密方法，使用前面的三个随机数，生成”对话密钥”（session key），用来加密接下来的整个对话过程。</p>
+<h3 id="HTTPS-握手过程中，客户端如何验证证书的合法性-💋"><a href="#HTTPS-握手过程中，客户端如何验证证书的合法性-💋" class="headerlink" title="HTTPS 握手过程中，客户端如何验证证书的合法性   💋"></a>HTTPS 握手过程中，客户端如何验证证书的合法性   💋</h3><p>浏览器会内置大多数证书（伪造证书来进行中间人攻击）<br><a href="https://github.com/Advanced-Frontend/Daily-Interview-Question/issues/142" target="_blank" rel="noopener">https://github.com/Advanced-Frontend/Daily-Interview-Question/issues/142</a><br><a href="https://www.cnblogs.com/evan-blog/p/9867561.html" target="_blank" rel="noopener">https://www.cnblogs.com/evan-blog/p/9867561.html</a></p>
+<h3 id="三次握手-四次挥手-💋"><a href="#三次握手-四次挥手-💋" class="headerlink" title="三次握手 四次挥手 💋"></a>三次握手 四次挥手 💋</h3><h4 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h4><p>假设只有两次握手。  </p>
+<ul>
+<li>客户端：在吗，我要发消息啦  </li>
+<li>服务端：OK，你发吧。<br>这样看起来很正常，但如果客户端在第一次挥手之后，由于网络的波动，数据迟迟到达不到服务端，客户端挂掉了，而服务端还在傻傻等待，造成了资源的浪费。  </li>
+</ul>
+<p>因此还需要客户端说：我开始发了！。  </p>
+<h4 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h4><p>为什么是四次呢，其实客户端和服务端都有两个状态：发送和接受。  </p>
+<ul>
+<li>客户端：我没有东西要发给你了 （第一次挥手）  </li>
+<li>服务端：好的，我关掉了 接受 态。（第二次挥手）。  </li>
+<li>服务端：（检查后发现自己也没有数据要发了），我也没有东西发给你了，拜拜（第三次挥手）  </li>
+<li>客户端：（关掉接受态），拜拜了您嘞～<h4 id="常见状态码"><a href="#常见状态码" class="headerlink" title="常见状态码"></a>常见状态码</h4></li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">常见状态码</span><br><span class="line">2开头 （请求成功）表示成功处理了请求的状态代码。</span><br><span class="line">200   （成功）  服务器已成功处理了请求。 通常，这表示服务器提供了请求的网页。</span><br><span class="line">201   （已创建）  请求成功并且服务器创建了新的资源。</span><br><span class="line">202   （已接受）  服务器已接受请求，但尚未处理。</span><br><span class="line">203   （非授权信息）  服务器已成功处理了请求，但返回的信息可能来自另一来源。</span><br><span class="line">204   （无内容）  服务器成功处理了请求，但没有返回任何内容。</span><br><span class="line">205   （重置内容） 服务器成功处理了请求，但没有返回任何内容。</span><br><span class="line">206   （部分内容）  服务器成功处理了部分 GET 请求。</span><br><span class="line">3开头 （请求被重定向）表示要完成请求，需要进一步操作。 通常，这些状态代码用来重定向。</span><br><span class="line">300   （多种选择）  针对请求，服务器可执行多种操作。 服务器可根据请求者 (user agent) 选择一项操作，或提供操作列表供请求者选择。</span><br><span class="line">301   （永久移动）  请求的网页已永久移动到新位置。 服务器返回此响应（对 GET 或 HEAD 请求的响应）时，会自动将请求者转到新位置。</span><br><span class="line">302   （临时移动）  服务器目前从不同位置的网页响应请求，但请求者应继续使用原有位置来进行以后的请求。</span><br><span class="line">303   （查看其他位置） 请求者应当对不同的位置使用单独的 GET 请求来检索响应时，服务器返回此代码。</span><br><span class="line">304   （未修改） 自从上次请求后，请求的网页未修改过。 服务器返回此响应时，不会返回网页内容。</span><br><span class="line">305   （使用代理） 请求者只能使用代理访问请求的网页。 如果服务器返回此响应，还表示请求者应使用代理。</span><br><span class="line">307   （临时重定向）  服务器目前从不同位置的网页响应请求，但请求者应继续使用原有位置来进行以后的请求。</span><br><span class="line">4开头 （请求错误）这些状态代码表示请求可能出错，妨碍了服务器的处理。</span><br><span class="line">400   （错误请求） 服务器不理解请求的语法。</span><br><span class="line">401   （未授权） 请求要求身份验证。 对于需要登录的网页，服务器可能返回此响应。</span><br><span class="line">403   （禁止） 服务器拒绝请求。</span><br><span class="line">404   （未找到） 服务器找不到请求的网页。</span><br><span class="line">405   （方法禁用） 禁用请求中指定的方法。</span><br><span class="line">406   （不接受） 无法使用请求的内容特性响应请求的网页。</span><br><span class="line">407   （需要代理授权） 此状态代码与 401（未授权）类似，但指定请求者应当授权使用代理。</span><br><span class="line">408   （请求超时）  服务器等候请求时发生超时。</span><br><span class="line">409   （冲突）  服务器在完成请求时发生冲突。 服务器必须在响应中包含有关冲突的信息。</span><br><span class="line">410   （已删除）  如果请求的资源已永久删除，服务器就会返回此响应。</span><br><span class="line">411   （需要有效长度） 服务器不接受不含有效内容长度标头字段的请求。</span><br><span class="line">412   （未满足前提条件） 服务器未满足请求者在请求中设置的其中一个前提条件。</span><br><span class="line">413   （请求实体过大） 服务器无法处理请求，因为请求实体过大，超出服务器的处理能力。</span><br><span class="line">414   （请求的 URI 过长） 请求的 URI（通常为网址）过长，服务器无法处理。</span><br><span class="line">415   （不支持的媒体类型） 请求的格式不受请求页面的支持。</span><br><span class="line">416   （请求范围不符合要求） 如果页面无法提供请求的范围，则服务器会返回此状态代码。</span><br><span class="line">417   （未满足期望值） 服务器未满足"期望"请求标头字段的要求。</span><br><span class="line">5开头（服务器错误）这些状态代码表示服务器在尝试处理请求时发生内部错误。 这些错误可能是服务器本身的错误，而不是请求出错。</span><br><span class="line">500   （服务器内部错误）  服务器遇到错误，无法完成请求。</span><br><span class="line">501   （尚未实施） 服务器不具备完成请求的功能。 例如，服务器无法识别请求方法时可能会返回此代码。</span><br><span class="line">502   （错误网关） 服务器作为网关或代理，从上游服务器收到无效响应。</span><br><span class="line">503   （服务不可用） 服务器目前无法使用（由于超载或停机维护）。 通常，这只是暂时状态。</span><br><span class="line">504   （网关超时）  服务器作为网关或代理，但是没有及时从上游服务器收到请求。</span><br><span class="line">505   （HTTP 版本不受支持） 服务器不支持请求中所用的 HTTP 协议版本。</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><h3 id="React声明周期及自己的理解"><a href="#React声明周期及自己的理解" class="headerlink" title="React声明周期及自己的理解"></a>React声明周期及自己的理解</h3><h3 id="Redux数据流的流程"><a href="#Redux数据流的流程" class="headerlink" title="Redux数据流的流程"></a>Redux数据流的流程</h3><h3 id="Redux如何实现多个组件之间的通信，多个组件使用相同状态如何进行管理"><a href="#Redux如何实现多个组件之间的通信，多个组件使用相同状态如何进行管理" class="headerlink" title="Redux如何实现多个组件之间的通信，多个组件使用相同状态如何进行管理"></a>Redux如何实现多个组件之间的通信，多个组件使用相同状态如何进行管理</h3><h3 id="使用过的Redux中间件"><a href="#使用过的Redux中间件" class="headerlink" title="使用过的Redux中间件"></a>使用过的Redux中间件</h3><p>redux-thunk<br>redux-logger</p>
+<h3 id="动态路由的两种方案"><a href="#动态路由的两种方案" class="headerlink" title="动态路由的两种方案"></a>动态路由的两种方案</h3><p>require.ensure<br>import()</p>
+<h3 id="如何配置React-Router"><a href="#如何配置React-Router" class="headerlink" title="如何配置React-Router"></a>如何配置React-Router</h3><h3 id="React-和-Vue-的-diff-时间复杂度从-O-n-3-优化到-O-n-，那么-O-n-3-和-O-n-是如何计算出来的？"><a href="#React-和-Vue-的-diff-时间复杂度从-O-n-3-优化到-O-n-，那么-O-n-3-和-O-n-是如何计算出来的？" class="headerlink" title="React 和 Vue 的 diff 时间复杂度从 O(n^3) 优化到 O(n) ，那么 O(n^3) 和 O(n) 是如何计算出来的？"></a>React 和 Vue 的 diff 时间复杂度从 O(n^3) 优化到 O(n) ，那么 O(n^3) 和 O(n) 是如何计算出来的？</h3><p>N^3 首先，第一棵树的每一个节点，都要和第二棵数的每一个节点进行对比，这是O(n^2)，其次，要计算树的最小转化路径。</p>
+<p>React 认为，Dom运算很少会出现跨层级别的移动，因此只将树按层进行对比。它还做了优化：不同的节点类型直接进行替换、key……</p>
+<h3 id="介绍下前端加密的常见场景和方法"><a href="#介绍下前端加密的常见场景和方法" class="headerlink" title="介绍下前端加密的常见场景和方法"></a>介绍下前端加密的常见场景和方法</h3><p>sessionId</p>
+<h3 id="vue-在-v-for-时给每项元素绑定事件需要用事件代理吗？为什么"><a href="#vue-在-v-for-时给每项元素绑定事件需要用事件代理吗？为什么" class="headerlink" title="vue 在 v-for 时给每项元素绑定事件需要用事件代理吗？为什么"></a>vue 在 v-for 时给每项元素绑定事件需要用事件代理吗？为什么</h3><p>需要，虽然大多数情况都会给每项绑定同样的回调事件，但还是会创建多个监听器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">### React Vue 原理 diff算法</span><br><span class="line">// https://juejin.im/post/5d8a49d26fb9a04ddf2c25d6  </span><br><span class="line"></span><br><span class="line">### React中Fibber是什么  </span><br><span class="line"></span><br><span class="line">### webpack 打包原理  </span><br><span class="line">- 找到entry文件，并分析其使用的模块化方案  </span><br><span class="line">- 根据对应的模块化方案加载模块</span><br><span class="line">- 拿到模块代码后使用对应的loader操作代码</span><br><span class="line">- 打包进一个bundle 文件，模块被分割成一个个函数，并有自己对应的id，webpack按照正确的加载顺序调用它。</span><br><span class="line">### webpack plugin 插件开发</span><br><span class="line">### vue-loader</span><br><span class="line">### React-Router  </span><br><span class="line">### webpack css-loader 和 style-loader 和 postcss  </span><br><span class="line">### 虚拟 Dom 如何实现</span><br><span class="line">## typescript 篇  </span><br><span class="line">### 装饰器 💋</span><br><span class="line">先认识一个设计模式：装饰器模式：</span><br><span class="line">&gt; 装饰器模式：给现有对象或方法添加额外的属性，并且不改变其原有结构。  </span><br><span class="line">举个例子。  </span><br><span class="line">```typescript</span><br><span class="line">class person &#123;</span><br><span class="line">  static skill = [&apos;fly&apos;, &apos;run&apos;]</span><br><span class="line">&#125;</span><br><span class="line">function derWrite(target, name, desc) &#123;</span><br><span class="line">  target.skill.push(&apos;walk&apos;)</span><br><span class="line">  target.prototype.walk = function() &#123;</span><br><span class="line">    console.log(&apos;i can walk&apos;)</span><br><span class="line">  &#125;</span><br><span class="line">  return (...arguments) =&gt; new target(...arguments)</span><br><span class="line">&#125;</span><br><span class="line">const p = derWrite(person)</span><br><span class="line">p.skill // [&apos;fly&apos;, &apos;run&apos;, &apos;walk&apos;]</span><br><span class="line">p.walk // [&apos;fly&apos;, &apos;run&apos;, &apos;walk&apos;]</span><br></pre></td></tr></table></figure></p>
+<p>以上，derWrite 就是 类 person 的装饰器，它使 person 有了 walk 的能力。Person 不需要 知道 derWrite 是如何实现的，它只需调用即可。当下次 Car 类也需要 walk 时， derWrite(Car) 即可。  </p>
+<p>上面就是装饰器模式，记得有个大神这么说过，设计模式的出现表示了语言设计的缺陷。对于装饰器来说 js 弥补了这个缺陷，引入了 装饰器 的概念，当仍在提案中……<br>但你可以使用 typescript 提前体验。让我们用装饰器重新实现以上例子。<br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@derWrite</span>();</span><br><span class="line"><span class="keyword">class</span> person &#123;</span><br><span class="line">  <span class="keyword">static</span> skill = [<span class="string">'fly'</span>, <span class="string">'run'</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">derWrite</span>(<span class="params">target, name, desc</span>) </span>&#123;</span><br><span class="line">  target.skill.push(<span class="string">'walk'</span>)</span><br><span class="line">  target.prototype.walk = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'i can walk'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> target</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">new</span> person().skill <span class="comment">// ['fly', 'run', 'walk']</span></span><br><span class="line"><span class="keyword">new</span> person().walk <span class="comment">// ['fly', 'run', 'walk']</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到，代码非常简洁，没什么好赘述的。</p>
+<hr>
+<h2 id="node-篇"><a href="#node-篇" class="headerlink" title="node 篇"></a>node 篇</h2><h3 id="介绍下-npm-模块安装机制，为什么输入-npm-install-就可以自动安装对应的模块？"><a href="#介绍下-npm-模块安装机制，为什么输入-npm-install-就可以自动安装对应的模块？" class="headerlink" title="介绍下 npm 模块安装机制，为什么输入 npm install 就可以自动安装对应的模块？"></a>介绍下 npm 模块安装机制，为什么输入 npm install 就可以自动安装对应的模块？</h3><h3 id="KOA2"><a href="#KOA2" class="headerlink" title="KOA2"></a>KOA2</h3><h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><h3 id="事件循环机制"><a href="#事件循环机制" class="headerlink" title="事件循环机制"></a>事件循环机制</h3><p><a href="https://github.com/qqqdu/dxy-node-race/blob/master/eventLoop/README.md" target="_blank" rel="noopener">https://github.com/qqqdu/dxy-node-race/blob/master/eventLoop/README.md</a></p>
+<hr>
+<h2 id="正则篇💋"><a href="#正则篇💋" class="headerlink" title="正则篇💋"></a>正则篇💋</h2><h3 id="trim-函数"><a href="#trim-函数" class="headerlink" title="trim 函数"></a>trim 函数</h3><hr>
+<h2 id="算法篇"><a href="#算法篇" class="headerlink" title="算法篇"></a>算法篇</h2><h3 id="介绍下深度优先遍历和广度优先遍历，如何实现？"><a href="#介绍下深度优先遍历和广度优先遍历，如何实现？" class="headerlink" title="介绍下深度优先遍历和广度优先遍历，如何实现？"></a>介绍下深度优先遍历和广度优先遍历，如何实现？</h3><h3 id="请分别用深度优先思想和广度优先思想实现一个拷贝函数？"><a href="#请分别用深度优先思想和广度优先思想实现一个拷贝函数？" class="headerlink" title="请分别用深度优先思想和广度优先思想实现一个拷贝函数？"></a>请分别用深度优先思想和广度优先思想实现一个拷贝函数？</h3><h3 id="二叉树遍历"><a href="#二叉树遍历" class="headerlink" title="二叉树遍历"></a>二叉树遍历</h3><h3 id="二叉树路径总和"><a href="#二叉树路径总和" class="headerlink" title="二叉树路径总和"></a>二叉树路径总和</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<p><a href="https://www.jianshu.com/p/f871c4c0663d" target="_blank" rel="noopener">https://www.jianshu.com/p/f871c4c0663d</a><br><a href="https://juejin.im/post/5b94d8965188255c5a0cdc02#heading-86" target="_blank" rel="noopener">https://juejin.im/post/5b94d8965188255c5a0cdc02#heading-86</a><br><a href="https://juejin.im/post/5b94d8965188255c5a0cdc02#heading-21" target="_blank" rel="noopener">https://juejin.im/post/5b94d8965188255c5a0cdc02#heading-21</a><br><a href="https://github.com/yygmind/blog/issues/43" target="_blank" rel="noopener">https://github.com/yygmind/blog/issues/43</a></p>
+</blockquote>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#语法篇"><span class="toc-number">1.</span> <span class="toc-text">语法篇</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Array-flat-💋"><span class="toc-number">1.1.</span> <span class="toc-text">Array.flat 💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#迭代器💋"><span class="toc-number">1.2.</span> <span class="toc-text">迭代器💋</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#我想遍历对象怎么办？💋"><span class="toc-number">1.2.1.</span> <span class="toc-text">我想遍历对象怎么办？💋</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#生成器💋"><span class="toc-number">1.3.</span> <span class="toc-text">生成器💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Set结构💋"><span class="toc-number">1.4.</span> <span class="toc-text">Set结构💋</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#weakSet💋"><span class="toc-number">1.4.1.</span> <span class="toc-text">weakSet💋</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map-结构-💋"><span class="toc-number">1.5.</span> <span class="toc-text">Map 结构  💋</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#weakMap-对象💋"><span class="toc-number">1.5.1.</span> <span class="toc-text">weakMap 对象💋</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双向绑定的两种实现方法💋"><span class="toc-number">1.6.</span> <span class="toc-text">双向绑定的两种实现方法💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reflect💋"><span class="toc-number">1.7.</span> <span class="toc-text">Reflect💋</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#为什么要引入-Reflect"><span class="toc-number">1.7.1.</span> <span class="toc-text">为什么要引入 Reflect</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#API"><span class="toc-number">1.7.2.</span> <span class="toc-text">API</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxy"><span class="toc-number">1.8.</span> <span class="toc-text">Proxy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Array-prototype-sort-的回调参数"><span class="toc-number">1.9.</span> <span class="toc-text">Array.prototype.sort 的回调参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Promise-实现原理"><span class="toc-number">1.10.</span> <span class="toc-text">Promise 实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#async-await-实现原理"><span class="toc-number">1.11.</span> <span class="toc-text">async await 实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0-1-0-2-0-3吗💋"><span class="toc-number">1.12.</span> <span class="toc-text">0.1+0.2===0.3吗💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#观察者模式-订阅模式-中介者模式"><span class="toc-number">1.13.</span> <span class="toc-text">观察者模式 订阅模式 中介者模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#观察者模式💋"><span class="toc-number">1.13.1.</span> <span class="toc-text">观察者模式💋</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#发布订阅模式💋"><span class="toc-number">1.13.2.</span> <span class="toc-text">发布订阅模式💋</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#中介者模式-💋"><span class="toc-number">1.13.3.</span> <span class="toc-text">中介者模式  💋</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ParseInt"><span class="toc-number">1.13.4.</span> <span class="toc-text">ParseInt</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#浏览器原理篇"><span class="toc-number">2.</span> <span class="toc-text">浏览器原理篇</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#路由的history"><span class="toc-number">2.1.</span> <span class="toc-text">路由的history</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存泄漏-💋"><span class="toc-number">2.2.</span> <span class="toc-text">内存泄漏  💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rem-物理像素-css像素"><span class="toc-number">2.3.</span> <span class="toc-text">Rem 物理像素 css像素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#高清屏解决方案-💋"><span class="toc-number">2.4.</span> <span class="toc-text">高清屏解决方案 💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#浏览器缓存策略"><span class="toc-number">2.5.</span> <span class="toc-text">浏览器缓存策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网络篇"><span class="toc-number">3.</span> <span class="toc-text">网络篇</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#网络模型-💋"><span class="toc-number">3.1.</span> <span class="toc-text">网络模型  💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP-Keep-Alive-💋"><span class="toc-number">3.2.</span> <span class="toc-text">HTTP Keep-Alive  💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#http2的多路复用-💋"><span class="toc-number">3.3.</span> <span class="toc-text">http2的多路复用 💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#https-💋"><span class="toc-number">3.4.</span> <span class="toc-text">https   💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTPS-握手过程中，客户端如何验证证书的合法性-💋"><span class="toc-number">3.5.</span> <span class="toc-text">HTTPS 握手过程中，客户端如何验证证书的合法性   💋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三次握手-四次挥手-💋"><span class="toc-number">3.6.</span> <span class="toc-text">三次握手 四次挥手 💋</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#三次握手"><span class="toc-number">3.6.1.</span> <span class="toc-text">三次握手</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四次挥手"><span class="toc-number">3.6.2.</span> <span class="toc-text">四次挥手</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#常见状态码"><span class="toc-number">3.6.3.</span> <span class="toc-text">常见状态码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#框架篇"><span class="toc-number">4.</span> <span class="toc-text">框架篇</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#React声明周期及自己的理解"><span class="toc-number">4.1.</span> <span class="toc-text">React声明周期及自己的理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redux数据流的流程"><span class="toc-number">4.2.</span> <span class="toc-text">Redux数据流的流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redux如何实现多个组件之间的通信，多个组件使用相同状态如何进行管理"><span class="toc-number">4.3.</span> <span class="toc-text">Redux如何实现多个组件之间的通信，多个组件使用相同状态如何进行管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用过的Redux中间件"><span class="toc-number">4.4.</span> <span class="toc-text">使用过的Redux中间件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#动态路由的两种方案"><span class="toc-number">4.5.</span> <span class="toc-text">动态路由的两种方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何配置React-Router"><span class="toc-number">4.6.</span> <span class="toc-text">如何配置React-Router</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#React-和-Vue-的-diff-时间复杂度从-O-n-3-优化到-O-n-，那么-O-n-3-和-O-n-是如何计算出来的？"><span class="toc-number">4.7.</span> <span class="toc-text">React 和 Vue 的 diff 时间复杂度从 O(n^3) 优化到 O(n) ，那么 O(n^3) 和 O(n) 是如何计算出来的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#介绍下前端加密的常见场景和方法"><span class="toc-number">4.8.</span> <span class="toc-text">介绍下前端加密的常见场景和方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue-在-v-for-时给每项元素绑定事件需要用事件代理吗？为什么"><span class="toc-number">4.9.</span> <span class="toc-text">vue 在 v-for 时给每项元素绑定事件需要用事件代理吗？为什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#node-篇"><span class="toc-number">5.</span> <span class="toc-text">node 篇</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#介绍下-npm-模块安装机制，为什么输入-npm-install-就可以自动安装对应的模块？"><span class="toc-number">5.1.</span> <span class="toc-text">介绍下 npm 模块安装机制，为什么输入 npm install 就可以自动安装对应的模块？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KOA2"><span class="toc-number">5.2.</span> <span class="toc-text">KOA2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis"><span class="toc-number">5.3.</span> <span class="toc-text">Redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件循环机制"><span class="toc-number">5.4.</span> <span class="toc-text">事件循环机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正则篇💋"><span class="toc-number">6.</span> <span class="toc-text">正则篇💋</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#trim-函数"><span class="toc-number">6.1.</span> <span class="toc-text">trim 函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法篇"><span class="toc-number">7.</span> <span class="toc-text">算法篇</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#介绍下深度优先遍历和广度优先遍历，如何实现？"><span class="toc-number">7.1.</span> <span class="toc-text">介绍下深度优先遍历和广度优先遍历，如何实现？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#请分别用深度优先思想和广度优先思想实现一个拷贝函数？"><span class="toc-number">7.2.</span> <span class="toc-text">请分别用深度优先思想和广度优先思想实现一个拷贝函数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二叉树遍历"><span class="toc-number">7.3.</span> <span class="toc-text">二叉树遍历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二叉树路径总和"><span class="toc-number">7.4.</span> <span class="toc-text">二叉树路径总和</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

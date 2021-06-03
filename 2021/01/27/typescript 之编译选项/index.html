@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>Typescript 之编译选项 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Typescript 之编译选项</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2021/01/27</time>
+            
+            
+          </div>
+          <p>typescript</p>
+<h2 id="代码检查"><a href="#代码检查" class="headerlink" title="代码检查"></a>代码检查</h2><h3 id="谈谈-tslint"><a href="#谈谈-tslint" class="headerlink" title="谈谈 tslint"></a>谈谈 tslint</h3><p>tslint 早在 19 年官方就不推荐使用了，直到去年 1 月份官方也不接受任何 PR 了。我翻了翻 19 年写的个人项目，竟然发现了 tslint 配置<a href="https://github.com/qqqdu/React-map-editor/blob/master/tslint.json。而我们的项目，早就开始使用" target="_blank" rel="noopener">https://github.com/qqqdu/React-map-editor/blob/master/tslint.json。而我们的项目，早就开始使用</a> <code>typescript-eslint-parser</code>，为什么 <code>tslint</code> 被官方废弃掉？</p>
+<p>在 tslint 核心开发成员 palantir 的博客（<a href="https://medium.com/palantir/tslint-in-2019-1a144c2317a9）里他解释了：" target="_blank" rel="noopener">https://medium.com/palantir/tslint-in-2019-1a144c2317a9）里他解释了：</a></p>
+<ul>
+<li>当 javascript 开发人员向 typescript 开发人员转换的过程中，eslint -&gt; tslint 是很重要的一个障碍，使用 eslint 可以减少这一环。</li>
+<li>eslint 提供了 typescript 的解析检查，而 tslint 底层实现针对的是 typescript 的 ast，所以为了社区标准化，为了社区团结，减少不必要竞争性，一起干好 eslint 才是正经事儿。（看看人对造轮子的态度）</li>
+<li>eslint 分析基础架构性能更高</li>
+<li>eslint 社区庞大！基于第二点，tslint 无妨共享其社区资源。</li>
+</ul>
+<p>当然，这段话对你来说没什么用，你也没什么项目需要从 tslint -&gt; eslint 转换。让我们忘掉 tslint，来找一个 eslint 最佳方案。</p>
+<h2 id="项目中最佳代码检查实践"><a href="#项目中最佳代码检查实践" class="headerlink" title="项目中最佳代码检查实践"></a>项目中最佳代码检查实践</h2><h3 id="开发前"><a href="#开发前" class="headerlink" title="开发前"></a>开发前</h3><h4 id="1-安装"><a href="#1-安装" class="headerlink" title="1. 安装"></a>1. 安装</h4><p>npm i eslint @tencent/eslint-config-tencent –save-dev</p>
+<h4 id="2-新建-eslintrc-js"><a href="#2-新建-eslintrc-js" class="headerlink" title="2. 新建 .eslintrc.js"></a>2. 新建 .eslintrc.js</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  extends: [</span><br><span class="line">    <span class="string">'@tencent/eslint-config-tencent'</span>,</span><br><span class="line">    <span class="string">'@tencent/eslint-config-tencent/ts'</span>,</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="3-新建-eslintignore"><a href="#3-新建-eslintignore" class="headerlink" title="3. 新建 .eslintignore"></a>3. 新建 .eslintignore</h4><p>node_modules<br>guide<br>references<br>dist</p>
+<h4 id="4-将以下代码添加在-package-json-的-script"><a href="#4-将以下代码添加在-package-json-的-script" class="headerlink" title="4. 将以下代码添加在 package.json 的 script"></a>4. 将以下代码添加在 package.json 的 script</h4><p>“lint”: “eslint ./ –fix –ext .jsx,.js,.ts”</p>
+<h3 id="开发中"><a href="#开发中" class="headerlink" title="开发中"></a>开发中</h3><h4 id="1，修改-vscode-配置"><a href="#1，修改-vscode-配置" class="headerlink" title="1，修改 vscode 配置"></a>1，修改 vscode 配置</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"eslint.validate"</span>: [</span><br><span class="line">    <span class="string">"javascript"</span>,</span><br><span class="line">    <span class="string">"javascriptreact"</span>,</span><br><span class="line">    <span class="string">"typescript"</span>,</span><br><span class="line">    <span class="string">"typescriptreact"</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">"typescript.tsdk"</span>: <span class="string">"node_modules/typescript/lib"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>保存时，自动修复：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"editor.codeActionsOnSave"</span>: &#123;</span><br><span class="line">    <span class="attr">"source.fixAll.eslint"</span>: <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="插件配置"><a href="#插件配置" class="headerlink" title="插件配置"></a>插件配置</h4><p>vscode 应用市场：eslint/prettier，后者主要用来修复代码风格。</p>
+<p>这二者在某些规则下会冲突，比如 eslint 单引号，prettier 双引号，那么你开发时就会左右横跳，因此需要关掉那些冲突的规则。下面这个库就是干这个事儿的：</p>
+<p><code>tnpm install --save-dev eslint-config-prettier</code></p>
+<p>然后修改 eslint 配置，注意 prettier 一定要放在其他配置项的下面，因为他要覆盖其他规则：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  extends: [</span><br><span class="line">    <span class="string">'@tencent/eslint-config-tencent'</span>,</span><br><span class="line">    <span class="string">'@tencent/eslint-config-tencent/ts'</span>,</span><br><span class="line">    <span class="string">'prettier'</span>,</span><br><span class="line">    <span class="string">'prettier/@typescript-eslint'</span>,</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="开发结束"><a href="#开发结束" class="headerlink" title="开发结束"></a>开发结束</h3><h4 id="上传代码"><a href="#上传代码" class="headerlink" title="上传代码"></a>上传代码</h4><p>在 <code>git commit</code> 时可校验 eslint 规则，如果有 <code>Error</code> 则中断提交，这可以防止你有天忘了项目代码里未修复的 eslint 错误而盲目提交，算是比较末尾的一环。</p>
+<p><code>tnpm install pre-commit --save-dev</code></p>
+<p>然后是 package.json 的配置：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"script"</span>: &#123;</span><br><span class="line">    <span class="attr">"lint"</span>: <span class="string">"eslint ./src/*.ts"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"pre-commit"</span>: [<span class="string">"lint"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样，在 commit 前会执行 lint 命令。</p>
+<h4 id="最后一环"><a href="#最后一环" class="headerlink" title="最后一环"></a>最后一环</h4><p>我是做到了上一步，如果你想更完美，去检验那些代码安全问题/圈复杂度云云，你可以继续探究，采用公司成熟的 ci 服务：orange-ci 以及 蓝盾 codecc 接入。这块石头哥最近好像在搞，等他搞好了分享一波～</p>
+<h2 id="编译选项"><a href="#编译选项" class="headerlink" title="编译选项"></a>编译选项</h2><p>中文版的 typescript 官网 是很拉垮的，推荐英文官网：<a href="https://www.typescriptlang.org/tsconfig" target="_blank" rel="noopener">https://www.typescriptlang.org/tsconfig</a></p>
+<p>编译选项是很庞大的一环，因为选项众多，我不可能照着文档一个个讲，所以我找了一个方法，拿出业务项目里的 <code>tsconfig</code> 配置，这些是比较常用的，搞懂这些也就够用了，这里先粘贴一下，我采用的是 Tdesign 的配置项：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"target"</span>: <span class="string">"esnext"</span>,</span><br><span class="line">    <span class="attr">"module"</span>: <span class="string">"esnext"</span>,</span><br><span class="line">    <span class="attr">"strict"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"noImplicitAny"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"noImplicitThis"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"strictNullChecks"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"removeComments"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"suppressImplicitAnyIndexErrors"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"resolveJsonModule"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"importHelpers"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"isolatedModules"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">"moduleResolution"</span>: <span class="string">"node"</span>,</span><br><span class="line">    <span class="attr">"jsx"</span>: <span class="string">"preserve"</span>,</span><br><span class="line">    <span class="attr">"experimentalDecorators"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"esModuleInterop"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"allowSyntheticDefaultImports"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"sourceMap"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"baseUrl"</span>: <span class="string">"."</span>,</span><br><span class="line">    <span class="attr">"paths"</span>: &#123;</span><br><span class="line">      <span class="attr">"@/*"</span>: [<span class="string">"src/*"</span>]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"lib"</span>: [<span class="string">"esnext"</span>, <span class="string">"dom"</span>, <span class="string">"dom.iterable"</span>, <span class="string">"scripthost"</span>]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"rules"</span>: &#123; <span class="attr">"trailing-comma"</span>: <span class="literal">false</span> &#125;,</span><br><span class="line">  <span class="attr">"include"</span>: [<span class="string">"./**/*.ts"</span>, <span class="string">"./**/*.tsx"</span>, <span class="string">"./**/*.vue"</span>],</span><br><span class="line">  <span class="attr">"exclude"</span>: [<span class="string">"node_modules"</span>, <span class="string">"docs/common/tdesign-doc-loader.js"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="模块解析"><a href="#模块解析" class="headerlink" title="模块解析"></a>模块解析</h3><h4 id="target"><a href="#target" class="headerlink" title="target"></a>target</h4><p>指定编译后 js 的目标版本，官网是这么描述的：</p>
+<blockquote>
+<p>指定 ECMAScript 目标版本 “ES3”（默认）， “ES5”， “ES6”/ “ES2015”， “ES2016”， “ES2017”或 “ESNext”。</p>
+</blockquote>
+<p>ESNext 指的是当前 ts 支持的最新版 es 标准，在 <a href="https://github.com/tc39/proposals" target="_blank" rel="noopener">https://github.com/tc39/proposals</a> 可以看到。</p>
+<p>需要注意的是， ESNext 是不稳定的，ts 版本升级时会有风险，所以尽量不配置它。</p>
+<h4 id="lib"><a href="#lib" class="headerlink" title="lib"></a>lib</h4><blockquote>
+<p>编译过程中需要引入的库列表，有默认值，和 target 绑定：<br>► 针对于–target ES5：DOM，ES5，ScriptHost<br>► 针对于–target ES6：DOM，ES6，DOM.Iterable，ScriptHost</p>
+</blockquote>
+<p>因为 target 值为 esnext，所以这里要加上 esnext 的 lib。</p>
+<p>DOM.Iterable 和 scriptHost 是什么？</p>
+<h4 id="module"><a href="#module" class="headerlink" title="module"></a>module</h4><blockquote>
+<p>指定生成哪个模块系统代码： “None”， “CommonJS”， “AMD”， “System”， “UMD”， “ES6”或 “ES2015”。<br>► 只有 “AMD”和 “System”能和 –outFile 一起使用。<br>► “ES6”和 “ES2015”可使用在目标输出为 “ES5”或更低的情况下。</p>
+</blockquote>
+<h4 id="moduleResolution"><a href="#moduleResolution" class="headerlink" title="moduleResolution"></a>moduleResolution</h4><p>指定模块解析策略，可选值有： node 和 classic</p>
+<p>简单来讲，这玩意儿是用来告诉编译器怎么找模块的，比如以下这个例子： <code>import {a} from &#39;moduleA&#39;</code>，typescript 将用两种策略去寻找 moduleA 模块。</p>
+<h5 id="对于-classic"><a href="#对于-classic" class="headerlink" title="对于 classic"></a>对于 classic</h5><p><strong>相对导入</strong><br>import { b } from “./moduleB”在源文件/root/src/folder/A.ts 中将导致以下查找：</p>
+<ul>
+<li>/root/src/folder/moduleB.ts</li>
+<li>/root/src/folder/moduleB.d.ts</li>
+</ul>
+<p><strong>非相对导入</strong><br>import { b } from “moduleB 在源文件 /root/src/folder/A.ts 中，将导致以下查找</p>
+<ul>
+<li>/root/src/folder/moduleB.ts</li>
+<li>/root/src/folder/moduleB.d.ts</li>
+<li>/root/src/moduleB.ts</li>
+<li>/root/src/moduleB.d.ts</li>
+<li>/root/moduleB.ts</li>
+<li>/root/moduleB.d.ts</li>
+<li>/moduleB.ts</li>
+<li>/moduleB.d.ts<br>聪明的你已经发现了，非相对导入是从源文件一步步往上层文件夹寻找的。</li>
+</ul>
+<h5 id="对于-node"><a href="#对于-node" class="headerlink" title="对于 node"></a>对于 node</h5><p><strong>相对导入</strong><br>var x = require(“./moduleB”); 在源文件 /root/src/moduleA.js 中，将导致以下查找</p>
+<ul>
+<li>询问名为的文件/root/src/moduleB.js 是否存在。</li>
+<li>询问文件夹/root/src/moduleB 是否包含 package.json 指定”main”模块的文件。在我们的示例中，如果 Node.js 找到/root/src/moduleB/package.json 包含的文件{ “main”: “lib/mainModule.js” }，则 Node.js 将引用/root/src/moduleB/lib/mainModule.js。</li>
+<li>询问该文件夹/root/src/moduleB 是否包含名为的文件 index.js。该文件被隐式视为该文件夹的“主”模块。</li>
+</ul>
+<p><strong>非相对导入</strong><br>var x = require(“moduleB”); 在源文件 /root/src/moduleA.js 中，将导致以下查找</p>
+<ul>
+<li>/root/src/node_modules/moduleB.js</li>
+<li>/root/src/node_modules/moduleB/package.json（如果指定了”main”属性）</li>
+<li>/root/src/node_modules/moduleB/index.js</li>
+<li>/root/node_modules/moduleB.js</li>
+<li>/root/node_modules/moduleB/package.json（如果指定了”main”属性）</li>
+<li>/root/node_modules/moduleB/index.js</li>
+<li>/node_modules/moduleB.js</li>
+<li>/node_modules/moduleB/package.json（如果指定了”main”属性）</li>
+<li>/node_modules/moduleB/index.js</li>
+</ul>
+<h5 id="对于-typescript"><a href="#对于-typescript" class="headerlink" title="对于 typescript"></a>对于 typescript</h5><p>ts 的导入模仿 node 的导入方式，但有不同点，在于多了 .ts, .tsx, and .d.ts 文件的解析。相对导入就不介绍了，直接看非相对导入：<br>对于 import { b } from “moduleB” 在 /root/src/moduleA.ts 中引入：</p>
+<ul>
+<li>/root/src/node_modules/moduleB.ts</li>
+<li>/root/src/node_modules/moduleB.tsx</li>
+<li>/root/src/node_modules/moduleB.d.ts</li>
+<li>/root/src/node_modules/moduleB/package.json (if it specifies a “types” property)</li>
+<li>/root/src/node_modules/@types/moduleB.d.ts</li>
+<li>/root/src/node_modules/moduleB/index.ts</li>
+<li>/root/src/node_modules/moduleB/index.tsx</li>
+<li><p>/root/src/node_modules/moduleB/index.d.ts</p>
+</li>
+<li><p>/root/node_modules/moduleB.ts</p>
+</li>
+<li>/root/node_modules/moduleB.tsx</li>
+<li>/root/node_modules/moduleB.d.ts</li>
+<li>/root/node_modules/moduleB/package.json (if it specifies a “types” property)</li>
+<li>/root/node_modules/@types/moduleB.d.ts</li>
+<li>/root/node_modules/moduleB/index.ts</li>
+<li>/root/node_modules/moduleB/index.tsx</li>
+<li><p>/root/node_modules/moduleB/index.d.ts</p>
+</li>
+<li><p>/node_modules/moduleB.ts</p>
+</li>
+<li>/node_modules/moduleB.tsx</li>
+<li>/node_modules/moduleB.d.ts</li>
+<li>/node_modules/moduleB/package.json (if it specifies a “types” property)</li>
+<li>/node_modules/@types/moduleB.d.ts</li>
+<li>/node_modules/moduleB/index.ts</li>
+<li>/node_modules/moduleB/index.tsx</li>
+<li>/node_modules/moduleB/index.d.t</li>
+</ul>
+<p>TIP：如果你模块导入有问题了，不妨试试将改属性改为 node</p>
+<h4 id="outFile"><a href="#outFile" class="headerlink" title="outFile"></a>outFile</h4><p>输出文件会被打包到单一文件中</p>
+<blockquote>
+<p>注：除非 module 是 None，System 或 AMD， 否则不能使用 outFile。 这个选项 不能 用来打包 CommonJS 或 ES6 模块。</p>
+</blockquote>
+<h4 id="outDir"><a href="#outDir" class="headerlink" title="outDir"></a>outDir</h4><p>指定生成文件的目标目录，没指定会在对应 ts 文件相同目录生成对应 js 文件。</p>
+<p>结合 outFile 和 outDir，你可以把单文件生成到 build 目录里。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"outDir"</span>: <span class="string">"build/"</span>,</span><br><span class="line">  <span class="attr">"outFile"</span>: <span class="string">"build/index.js"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="严格模式"><a href="#严格模式" class="headerlink" title="严格模式"></a>严格模式</h3><p>通过设置：alwaysStrict 可以开启 js 的严格模式,如果触发了严格模式，则编译不会通过。</p>
+<p>还有其他模式的配置项，一一列举一下</p>
+<h4 id="noImplicitAny"><a href="#noImplicitAny" class="headerlink" title="noImplicitAny"></a>noImplicitAny</h4><p>不能有隐式的 any<br>参数必须经过定义，否则不通过编译，比如这个形参未定义类型，如果设置该属性为 true 的话，编译时这里会报未定义类型的错误，当然，你也可以设置 <code>any</code> 类型。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params">s</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//Parameter 's' implicitly has an 'any' type.</span></span><br><span class="line">  <span class="built_in">console</span>.log(s.subtr(<span class="number">3</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="noImplicitThis"><a href="#noImplicitThis" class="headerlink" title="noImplicitThis"></a>noImplicitThis</h4><p>不能有隐式的 this</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params">s: <span class="built_in">any</span></span>) </span>&#123;</span><br><span class="line">  <span class="comment">//'this' implicitly has type 'any' because it does not have a type annotation.</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>比如这个例子，this 的指向取决于函数的调用方，所以这个 this 指向是不明确的，当设置了该属性时，编译就不会通过了</p>
+<h4 id="strictBindCallApply"><a href="#strictBindCallApply" class="headerlink" title="strictBindCallApply"></a>strictBindCallApply</h4><p>call 和 apply 方法的底层函数参数会被校验</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// With strictBindCallApply on</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params">x: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">parseInt</span>(x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> n1 = fn.call(<span class="literal">undefined</span>, <span class="string">'10'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> n2 = fn.call(<span class="literal">undefined</span>, <span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+<p>如果设置了该参数，则 n2 会报错： Argument of type ‘boolean’ is not assignable to parameter of type ‘string’.</p>
+<h4 id="strict"><a href="#strict" class="headerlink" title="strict"></a>strict</h4><p>还有更多类型，像：strictFunctionTypes strictNullChecks strictPropertyInitialization 就不一一列举了，如果你嫌麻烦，想启用所有严格模式，你可以将 strict 参数设置为 true</p>
+<h3 id="其他设置"><a href="#其他设置" class="headerlink" title="其他设置"></a>其他设置</h3><ul>
+<li>removeComments 移除 log</li>
+<li>resolveJsonModule 允许导入 json</li>
+<li>paths 路径别名，厌倦了 ../../可以使用</li>
+<li>sourceMap 不多说了</li>
+</ul>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#代码检查"><span class="toc-number">1.</span> <span class="toc-text">代码检查</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#谈谈-tslint"><span class="toc-number">1.1.</span> <span class="toc-text">谈谈 tslint</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目中最佳代码检查实践"><span class="toc-number">2.</span> <span class="toc-text">项目中最佳代码检查实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#开发前"><span class="toc-number">2.1.</span> <span class="toc-text">开发前</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-安装"><span class="toc-number">2.1.1.</span> <span class="toc-text">1. 安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-新建-eslintrc-js"><span class="toc-number">2.1.2.</span> <span class="toc-text">2. 新建 .eslintrc.js</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-新建-eslintignore"><span class="toc-number">2.1.3.</span> <span class="toc-text">3. 新建 .eslintignore</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-将以下代码添加在-package-json-的-script"><span class="toc-number">2.1.4.</span> <span class="toc-text">4. 将以下代码添加在 package.json 的 script</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开发中"><span class="toc-number">2.2.</span> <span class="toc-text">开发中</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1，修改-vscode-配置"><span class="toc-number">2.2.1.</span> <span class="toc-text">1，修改 vscode 配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#插件配置"><span class="toc-number">2.2.2.</span> <span class="toc-text">插件配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开发结束"><span class="toc-number">2.3.</span> <span class="toc-text">开发结束</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#上传代码"><span class="toc-number">2.3.1.</span> <span class="toc-text">上传代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#最后一环"><span class="toc-number">2.3.2.</span> <span class="toc-text">最后一环</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译选项"><span class="toc-number">3.</span> <span class="toc-text">编译选项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#模块解析"><span class="toc-number">3.1.</span> <span class="toc-text">模块解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#target"><span class="toc-number">3.1.1.</span> <span class="toc-text">target</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#lib"><span class="toc-number">3.1.2.</span> <span class="toc-text">lib</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#module"><span class="toc-number">3.1.3.</span> <span class="toc-text">module</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#moduleResolution"><span class="toc-number">3.1.4.</span> <span class="toc-text">moduleResolution</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#对于-classic"><span class="toc-number">3.1.4.1.</span> <span class="toc-text">对于 classic</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#对于-node"><span class="toc-number">3.1.4.2.</span> <span class="toc-text">对于 node</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#对于-typescript"><span class="toc-number">3.1.4.3.</span> <span class="toc-text">对于 typescript</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#outFile"><span class="toc-number">3.1.5.</span> <span class="toc-text">outFile</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#outDir"><span class="toc-number">3.1.6.</span> <span class="toc-text">outDir</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#严格模式"><span class="toc-number">3.2.</span> <span class="toc-text">严格模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#noImplicitAny"><span class="toc-number">3.2.1.</span> <span class="toc-text">noImplicitAny</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#noImplicitThis"><span class="toc-number">3.2.2.</span> <span class="toc-text">noImplicitThis</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#strictBindCallApply"><span class="toc-number">3.2.3.</span> <span class="toc-text">strictBindCallApply</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#strict"><span class="toc-number">3.2.4.</span> <span class="toc-text">strict</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他设置"><span class="toc-number">3.3.</span> <span class="toc-text">其他设置</span></a></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

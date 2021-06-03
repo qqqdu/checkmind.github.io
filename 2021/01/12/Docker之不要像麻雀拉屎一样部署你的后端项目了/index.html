@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>Docker之不要像麻雀拉屎一样部署你的后端项目了 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Docker之不要像麻雀拉屎一样部署你的后端项目了</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2021/01/12</time>
+            
+            
+          </div>
+          <p>docker python nodejs</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>现在手里没几个 <code>NodeJs</code> 应用还好意思自称前端嘛（误）？</p>
+</blockquote>
+<p>想象这样一个场景，你翻开 express 官网，本地环境照着文档写一个路由 <code>app.get(&#39;/&#39;, res =&gt; res.send(&#39;hello world&#39;))</code>，然后浏览器一输 <code>localhost</code>，看到了熟悉的字符串，你很开心。然后上传代码到 <code>github</code>，首充 <code>9.9</code> 买了云服务器，之后就是痛苦的装 <code>Node</code> 啦、配环境变量啦、装 <code>Git</code> 啦、拉代码啦、<code>npm install</code> 啦……一个美好的午后很快过去……</p>
+<p>一顿操作之后，终于你在浏览器通过云服务器的 <code>ip</code> 又看到了熟悉的字符串，你很开心。</p>
+<p>过了一段时间，由于你工作繁忙，服务器忘记续费被回收了，但你又想学 <code>Node</code> 了，于是你又要花一段时间重复以上的操作。</p>
+<p>以上这段只是我为了表示你写的服务需要容易迁移而举的例子，你可能说，我的服务器续费了 99 年，我过期了，它都不会过期，但你还可以想想以下这些场景：</p>
+<ul>
+<li>维护了两年的内网应用，由于机房搬迁，你的服务器在裁撤名单里</li>
+<li>维护了两年的内网应用，由于你要离职，大量的鸟屎服务散落在各地，你要在一周内把它交接给你可怜的同事</li>
+<li>你不小心运行了 <code>rm -rf *</code> 命令</li>
+<li>服务器要负载均衡，你要快速部署服务到多个服务器</li>
+<li>……</li>
+</ul>
+<p>再想想，每次迁移前后操作系统的版本不一致，那么各种接口的不兼容会带给你什么！？</p>
+<h2 id="人生苦短，我用-Docker"><a href="#人生苦短，我用-Docker" class="headerlink" title="人生苦短，我用 Docker"></a>人生苦短，我用 Docker</h2><p>为什么我决定用 Docker 呢？是因为我真的遇到了上面问题之一，当时我的图标库后端服务上线没几天，突然被拉近了一个企业微信群，说是重庆机房对部分服务器进行裁撤，需要自行对服务进行迁移，我当时心凉了半截，因为我的服务器 ip 出现在了裁撤名单里！！！</p>
+<p>要知道我的图标库项目维护着两个后端服务，一个是 Node 服务，负责爬取海量 <code>ICON</code> 图片，并处理一些简单的 <code>CURD</code> 请求。另一个是 <code>Python</code> 服务，负责批量生成搜图模型以及搜图接口。当时配置服务器环境花了我不少时间，尤其是蛋疼的 <code>Python</code> 版本，部署过 <code>Python</code> 服务的人，肯定感受过<code>Python 2</code> 和 <code>Python 3</code> 的版本痛苦。</p>
+<p>不过后续还好，由于我使用的云服务器，机房迁移对我是无感的，也不需要我做额外的操作。但那个下午确实让我担惊受怕，所以我当时就想，如果出了类似问题，需要在短时间内对服务进行迁移，我该怎么做呢？答案呼之欲出：人生苦短，我用 <code>Docker</code> (<code>Python</code>：不是我吗？？)</p>
+<h2 id="Docker-介绍"><a href="#Docker-介绍" class="headerlink" title="Docker 介绍"></a>Docker 介绍</h2><p><code>Docker</code> 的意思是 码头工人/搬运工人，它的起名来自于集装箱策略，简单的来描述下：</p>
+<p>早期海运成本很高，有一部分时间和金钱花在了装货和卸货，由于运输货物的大小不同，为了节省空间需要人员来进行货物打包并且搬上轮船，可想而知成本极大，要知道贸易的积极性取决于利润，而减少贸易成本则会提高利润。如何减少这个成本？</p>
+<p>为何不把所有东西塞进一个统一大小的箱子里，统一装卸和搬运，于是集装箱出现了，集装箱不仅仅是一个铁盒子这么简单，伴随它的有集装箱标准，有了统一的标准，才能让集装箱被搬上火车/搬上货车/搬上轮船。</p>
+<p>先从集装箱的思绪中出来，想想我们拿到一台新服务器，装软件/配环境变量/装各种包，一顿操作。像不像那个在码头流着汗打包的工人？</p>
+<p>Docker 就是来解放我们的。他有三个概念：仓库/镜像和容器。仓库类比为 github，他是用来存镜像的，而镜像就相当于集装箱标准，它规定了软件运行的环境和版本。容器就是我们服务运行的标准化环境，他是由镜像打包而来的。可能你看到这里有点懵，但没关系，一个简单的实例就能让你理解这些。</p>
+<h3 id="开发环境安装-Docker"><a href="#开发环境安装-Docker" class="headerlink" title="开发环境安装 Docker"></a>开发环境安装 <code>Docker</code></h3><p>推荐直接根据菜鸟教程安装桌面端，省去很多烦恼: <a href="https://www.runoob.com/docker/macos-docker-install.html" target="_blank" rel="noopener">MAC 安装</a></p>
+<p>因为我很懒，关于 Docker 的基本操作就不介绍了，后面碰见需求一步步熟悉，我先从 <code>Docker Compose</code> 直接讲起，</p>
+<h3 id="Docker-Compose"><a href="#Docker-Compose" class="headerlink" title="Docker Compose"></a>Docker Compose</h3><p><code>Docker Compose</code> 是 <code>Docker</code> 的工具，你可以通过 <code>YML</code> 文件配置来运行 <code>Docker</code>。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># compose 依赖的版本</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"><span class="comment"># 指定容器名称</span></span><br><span class="line"><span class="attr">container_name:</span> <span class="string">'my-docker'</span></span><br><span class="line"><span class="comment"># 构建设置</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">web:</span></span><br><span class="line">    <span class="comment"># 当前目录构建</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">.</span></span><br><span class="line">    <span class="comment"># 端口映射</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">'80:80'</span></span><br></pre></td></tr></table></figure>
+<p>简单的讲，Docker Compose 就是可以让你把 docker 命令配置写在配置文件里然后运行的工具。接下来的案例都会使用它来进行操作。</p>
+<h3 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h3><p>Dockerfile 就是来告诉 Docker 怎么创建镜像以及创建完成后的各种操作，其内容就是一条条指令，<br>直接举例子，以下是名为 Dockerfile 的文件，，包括镜像/工作空间/文件拷贝等等。具体作用见备注。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 镜像是 node 的 14.9.0 版本，后续指令都将在这个环境下运行</span></span><br><span class="line"><span class="keyword">FROM</span> node:<span class="number">14.9</span>.<span class="number">0</span></span><br><span class="line"><span class="comment"># 工作空间设置为 /app，这指的是容器内的工作空间</span></span><br><span class="line"><span class="keyword">WORKDIR</span> /app</span><br><span class="line"><span class="comment"># 拷贝当前工作目录的 package.json -&gt; 容器的工作空间 /app</span></span><br><span class="line"><span class="keyword">COPY</span> package.json /app</span><br><span class="line"><span class="comment"># 设置镜像源并安装包</span></span><br><span class="line"><span class="keyword">RUN</span> npm i --registry=http://r.tnpm.oa.com &amp;&amp; npm install</span><br><span class="line"><span class="comment"># 复制当前工作目录的所有文件到 /app</span></span><br><span class="line"><span class="keyword">COPY</span> . /app</span><br><span class="line"><span class="comment"># 声明 80 端口，仅仅告诉镜像使用者默认端口，实际映射在下文告知</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"><span class="comment"># 运行 node 脚本</span></span><br><span class="line"><span class="keyword">CMD</span> node server.js</span><br></pre></td></tr></table></figure>
+<p>通过以上文件，就描述了一个 <code>nodejs</code> 应用的简单部署流程。</p>
+<h3 id="dockerignore"><a href="#dockerignore" class="headerlink" title=".dockerignore"></a>.dockerignore</h3><p>这个文件类似 <code>.gitignore</code>，Docker 运行时，会忽略掉本地工作空间里被配置到 <code>.dockerignore</code> 中的文件。</p>
+<p>为什么要有这个文件，比如你在 mac 环境下 安装了 <code>npm</code> 包，<code>Docker</code> 在运行时，直接将 <code>node_modules</code> 拷贝到了 容器内 的<code>linux</code> 工作空间，那就会有兼容问题。<br>比如我就遇到类似问题，在 mac 安装的 <code>sharp</code> 包, 拷贝到容器后，在 <code>Docker</code> 内运行代码时会提示 <code>error: &#39;darwin-x64&#39; binaries cannot be used on the &#39;linux-x64&#39; platform. #2443</code>，因此我们最好将 <code>node_modules</code> 忽略掉。</p>
+<p>当然，忽略掉一些不必要的文件也可以提高 <code>docker</code> 的构建速度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 和.gitignore 配置一致</span><br><span class="line">node_modules</span><br></pre></td></tr></table></figure>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>当你把以上三个文件创建完毕后，你的目录结构大概是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── Dockerfile</span><br><span class="line">├── docker-compose.yml</span><br><span class="line">├── node_modules</span><br><span class="line">├── package.json</span><br><span class="line">├── server.js</span><br></pre></td></tr></table></figure>
+<p>然后就可以创建运行 docker 容器了，非常简单，运行：<br><code>docker-compose up</code><br>此时，你的服务就可以通过 <code>localhost</code> 访问到了。</p>
+<h3 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h3><p>你已经启动了一个容器，但什么也没见到过，他就运行起来了，现在，你可以运行 <code>docker ps</code> 命令看到当前运行的容器。</p>
+<p>之后，通过 <code>docker exec -it container-id /bin/bash</code> 进入容器内部，熟悉的 <code>/app</code> 工作空间摆在你面前。</p>
+<p>当你修改了代码之后，你可以通过 <code>docker-compose up --build</code> 再重新构建容器，因为有缓存机制，这次构建会很快速！</p>
+<h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><p>公司内的 devCloud 已经内置了 docker，你只需要登陆云开发，然后下载安装 docker-compose：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L <span class="string">"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)"</span> -o /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+<p>将代码克隆到相关目录，然后在项目根目录执行：<br><code>docker-compose up</code></p>
+<p>一切都完成了！！！</p>
+<h3 id="python-配置"><a href="#python-配置" class="headerlink" title="python 配置"></a>python 配置</h3><p>这里再贴一下 python 的 Dockerfile：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FROM python:3.8.5</span><br><span class="line">WORKDIR /code</span><br><span class="line">ENV FLASK_APP ./search-picture/server.py</span><br><span class="line">ENV FLASK_RUN_HOST 0.0.0.0</span><br><span class="line">ENV FLASK_RUN_PORT 8082</span><br><span class="line">COPY requirements.txt requirements.txt</span><br><span class="line">RUN pip install -r requirements.txt</span><br><span class="line">COPY . /code</span><br><span class="line">CMD [&quot;flask&quot;, &quot;run&quot;]</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我用两周时间将自己的两个后端服务 docker 化，容器应该是最小粒度的，你可以把它想像成组件，所以对于 python 服务和 node 服务应该拆分开了，作为两个容器运行，但我之前使用 node 服务来爬取图片，存在 python 的工作目录，然后 python 再去消费，这个过程是耦合的。</p>
+<p>所以我用了很大一部分时间去拆分服务，爬取图片部分也用 python 重写了。现在两个项目都容器化，服务变得十分容易拓展，这意味着什么？</p>
+<p>我的服务可以光速交接/服务器裁撤与我无关/本地环境和云端保持一致</p>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><p>_备注：你可能会遇到这个问题，参考：<a href="http://km.oa.com/group/16523/articles/show/412832" target="_blank" rel="noopener">http://km.oa.com/group/16523/articles/show/412832</a> _</p>
+<blockquote>
+<p>最近使用公司自研云中的 docker 在创建网络时候出现了以下错误：<br>Docker “ERROR: could not find an available, non-overlapping IPv4 address pool among the defaults to assign to the network”<br> 解决方法：<br>需要指定一下 IP 段就好了<br>// 删除一个网段，可选 172 和 198<br>ip route del 172.16.0.0/12<br>// tlinux 需要改路由，下面这个文件不删除重启又会占用网段<br>vim /etc/sysconfig/network-scripts/setdefaultgw-tlinux<br>删除下面一行<br>172.16.0.0/12</p>
+</blockquote>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#人生苦短，我用-Docker"><span class="toc-number">2.</span> <span class="toc-text">人生苦短，我用 Docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-介绍"><span class="toc-number">3.</span> <span class="toc-text">Docker 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#开发环境安装-Docker"><span class="toc-number">3.1.</span> <span class="toc-text">开发环境安装 Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Docker-Compose"><span class="toc-number">3.2.</span> <span class="toc-text">Docker Compose</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dockerfile"><span class="toc-number">3.3.</span> <span class="toc-text">Dockerfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dockerignore"><span class="toc-number">3.4.</span> <span class="toc-text">.dockerignore</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行"><span class="toc-number">3.5.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进入容器"><span class="toc-number">3.6.</span> <span class="toc-text">进入容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署"><span class="toc-number">3.7.</span> <span class="toc-text">部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#python-配置"><span class="toc-number">3.8.</span> <span class="toc-text">python 配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见问题"><span class="toc-number">5.</span> <span class="toc-text">常见问题</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

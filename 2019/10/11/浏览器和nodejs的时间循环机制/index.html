@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>nodejs 事件循环机制与浏览器的区别 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>nodejs 事件循环机制与浏览器的区别</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/10/11</time>
+            
+            
+          </div>
+          <p>区别大了</p>
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>尽管大多数情况它们表现相同，但浏览器的事件循环机制是基于 html5 标准的，nodejs是基于 <code>libuv</code> 的，所以这二者肯定是不同的。  </p>
+<p><a href="http://nodejs.cn/api/n-api.html#n-api_n_api_libuv_event_loop" target="_blank" rel="noopener">nodejs</a><br><a href="https://html.spec.whatwg.org/multipage/webappapis.html#event-loops" target="_blank" rel="noopener">html</a></p>
+<h2 id="浏览器的事件循环"><a href="#浏览器的事件循环" class="headerlink" title="浏览器的事件循环"></a>浏览器的事件循环</h2><p>浏览器的事件循环相比 node 而言，简单多了，他将任务分为宏任务和微任务</p>
+<ul>
+<li>macro-task（宏任务） 比如： setTimeout、setInterval、script（整体代码）、 I/O 操作、UI 渲染等</li>
+<li>micro-task （微任务）比如: Promise、  MutationObserver 等。  </li>
+</ul>
+<blockquote>
+<p>从 macro-task队列中(task queue)取一个宏任务执行, 执行完后, 取出所有的 micro-task 执行。macro-task 出栈是一个个出的，micro-task 是一组一组出的</p>
+</blockquote>
+<h2 id="node-事件循环"><a href="#node-事件循环" class="headerlink" title="node 事件循环"></a>node 事件循环</h2><p>node 启动后，就会按以下顺序执行，直到有异步事件触发，再次进入新的循环。（以下其实就是<code>libuv</code>的执行阶段） </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">   ┌───────────────────────┐</span><br><span class="line">┌─&gt;│        timers         │</span><br><span class="line">│  └──────────┬────────────┘</span><br><span class="line">│  ┌──────────┴────────────┐</span><br><span class="line">│  │     I/O callbacks     │</span><br><span class="line">│  └──────────┬────────────┘</span><br><span class="line">│  ┌──────────┴────────────┐</span><br><span class="line">│  │ idle, prepare         │</span><br><span class="line">│  └──────────┬────────────┘      ┌───────────────┐</span><br><span class="line">│  ┌──────────┴────────────┐      │   incoming:   │</span><br><span class="line">│  │         poll          │&lt;─────┤  connections, │</span><br><span class="line">│  └──────────┬────────────┘      │   data, etc.  │</span><br><span class="line">│  ┌──────────┴────────────┐      └───────────────┘</span><br><span class="line">│  │    check(setImmediate)│</span><br><span class="line">│  └──────────┬────────────┘</span><br><span class="line">│  ┌──────────┴────────────┐</span><br><span class="line">└──┤    close callbacks    │</span><br><span class="line">   └───────────────────────┘</span><br></pre></td></tr></table></figure>
+<p>Timers(计时器)：  </p>
+<blockquote>
+<p>这里执行 setTimeout 和 setInterval 定时器的回调,如果到这一步，参数时间到了，会直接执行。并且<code>它们的参数是有下限时间的，[1, 2147483647]，就算你设置了 0，也会修正为 1</code>.</p>
+</blockquote>
+<p>I/O回调：</p>
+<blockquote>
+<p>一般处理由系统或者网络错误抛出的异常回调函数,比如 TCP Error  </p>
+</blockquote>
+<p>idle, prepare:  </p>
+<blockquote>
+<p>nodejs 内部函数调用。不需要讨论<br>poll 维护着一个队列，这个队列存储着除了 <code>Timer\setImmediate\close</code> 之外的异步回调函数，当异步函数完成时，poll 负责执行 callback。<br>以下是poll(轮询阶段，很关键)的流程,我用伪代码表现流程：  </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">if(poll队列不为空) &#123;</span><br><span class="line">  事件循环先遍历队列并同步执行回调，直到队列清空或执行回调数达到系统上限。</span><br><span class="line">&#125; else &#123;</span><br><span class="line">  if(代码已经被setImmediate()设定了回调) &#123;</span><br><span class="line">    直接结束poll阶段进入check阶段来执行check队列里的回调</span><br><span class="line">  &#125; else if(如果有被设定的timers) &#123;</span><br><span class="line">    如果有一个或多个timers下限时间已经到达，那么事件循环将绕回timers阶段，并执行timers的有效回调队列。</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    事件循环会阻塞poll阶段等待回调被加入poll队列。</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这句话多看几遍，<code>事件循环会阻塞在poll阶段等待回调被加入poll队列。</code></p>
+<p>close callbacks  </p>
+<blockquote>
+<p>执行各种 close 回调比如  </p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">p.on(<span class="string">'close'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">code</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'子进程已退出，退出码 '</span>+code);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line">setImmediate(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'setImmediate'</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>在node 中，这两者的执行顺序是随机的(多运行几次)。首先，上面讲到，setTimeout 的参数会被修正为 1。当 setTimeout 先打印时，我们模拟一遍流程。  </p>
+<ul>
+<li>当前进程性能突然变低，等 timeout 执行的时候，时间已经大于等于1了，直接执行回调。timer…… -&gt; poll -&gt; setImmediate </li>
+</ul>
+<p>如果执行那一刻进程性能高一点，从 Timers(不执行) -&gt; poll，此时，poll 队列为空，有 setImmediate,进入 check 阶段 -&gt; callbacks -&gt; Timers -&gt; …… -&gt; poll -&gt; 执行 Timer  </p>
+<h3 id="process-和-Promise"><a href="#process-和-Promise" class="headerlink" title="process 和 Promise"></a>process 和 Promise</h3><blockquote>
+<p>process.nextTick()不在以上流程中，它会在主逻辑的末尾任务队列调用之前调用。也在 当前事件循环的最后，下次事件循环之前调用。</p>
+</blockquote>
+<p>怎么理解这句话呢，改造下上面的 demo  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line">setImmediate(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'setImmediate'</span>);</span><br><span class="line">&#125;)</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'nextTick'</span>);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>你会发现，再也不随机了。结果是  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nextTick</span><br><span class="line">setTimeout</span><br><span class="line">setImmediate</span><br></pre></td></tr></table></figure>
+<p>这个时候，运行顺序就是： 主流程 -&gt; nextTick -&gt; Timer -&gt; setImmediate<br>process.nextTick 让事件循环延迟了一小会儿，所以 timeout 的时间总是大于 1 了。<br>Promise 和 process.nextTick 的执行阶段是一样的，但它比后者优先级低。</p>
+<h3 id="验证下你真的懂了吗"><a href="#验证下你真的懂了吗" class="headerlink" title="验证下你真的懂了吗"></a>验证下你真的懂了吗</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'setTimeout=&gt; 1'</span>),<span class="number">0</span>);</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'nextTick=&gt; 1'</span>));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">2</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'setTimeout=&gt; 2'</span>),<span class="number">0</span>);</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'nextTick=&gt; 2'</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">10000222200</span>; i++) &#123;&#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">3</span>);</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'nextTick=&gt; 3'</span>));</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'setTimeout=&gt; 3'</span>),<span class="number">0</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">4</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'setTimeout=&gt; 4'</span>),<span class="number">0</span>);</span><br><span class="line">process.nextTick(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'nextTick=&gt; 4'</span>));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">10000222200</span>; i++) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这二者表现大多数情况是相同的，但其原理，区别大了。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://nodejs.cn/api/n-api.html#n-api_n_api_libuv_event_loop" target="_blank" rel="noopener">nodejs 事件循环</a><br><a href="https://html.spec.whatwg.org/multipage/webappapis.html#event-loops" target="_blank" rel="noopener">html5 事件循环</a><br><a href="https://segmentfault.com/a/1190000013102056?utm_source=tag-newest" target="_blank" rel="noopener">node 事件循环机制</a></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#文档"><span class="toc-number">1.</span> <span class="toc-text">文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#浏览器的事件循环"><span class="toc-number">2.</span> <span class="toc-text">浏览器的事件循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#node-事件循环"><span class="toc-number">3.</span> <span class="toc-text">node 事件循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">3.1.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#process-和-Promise"><span class="toc-number">3.2.</span> <span class="toc-text">process 和 Promise</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证下你真的懂了吗"><span class="toc-number">3.3.</span> <span class="toc-text">验证下你真的懂了吗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

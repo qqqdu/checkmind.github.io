@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>逆波兰式 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>逆波兰式</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2020/02/12</time>
+            
+            
+          </div>
+          <p>名字很高大上？不，它很简单</p>
+<h2 id="1-1"><a href="#1-1" class="headerlink" title="1+1"></a>1+1</h2><p>A：别急着理解标题，先看看 1 + 1。  </p>
+<p>A：1+1 是什么？  </p>
+<p>B：是 2 ？  </p>
+<p>A：不不不，我要说的不是这个，在表达式层面来讲，它是最简单的表达式。    </p>
+<p>A：它由 <code>1</code> <code>+</code> <code>1</code> 组成。  </p>
+<p>B：这不是废话吗。  </p>
+<p>A：不不不，我说的是。  </p>
+<p>A：它由 <code>1</code> <code>+</code> <code>1</code> 组成。  </p>
+<p>A：而不是 <code>+</code> <code>1</code> <code>1</code>  </p>
+<p>A：也不是 <code>1</code> <code>1</code> <code>+</code></p>
+<p>B：你有病吗？  </p>
+<p>A：哈哈哈，这就引出了我们的标题，符合我们常理的 <code>1+1</code> 称为中缀表达式，符号在中间嘛。而 <code>+11</code> 是前缀表达式。  </p>
+<p>B: 我猜 <code>11+</code> 是后缀表达式。  </p>
+<p>A：你他娘真是个人才。确实它是后缀表达式。也称为 <code>逆波兰式</code>。  </p>
+<p>B：我去，绕这么大一圈…….  </p>
+<p>A：不扯淡了，进入正题吧。  </p>
+<h2 id="后缀表达式"><a href="#后缀表达式" class="headerlink" title="后缀表达式"></a>后缀表达式</h2><p>它是如何定义的呢？  </p>
+<h3 id="E-为常量或变量"><a href="#E-为常量或变量" class="headerlink" title="E 为常量或变量"></a>E 为常量或变量</h3><blockquote>
+<p>如果E是一个常量或变量，那E的后缀式是它本身  </p>
+</blockquote>
+<p>比如，2 是 2 的后缀式。  </p>
+<h3 id="E1-op-E2-的形式"><a href="#E1-op-E2-的形式" class="headerlink" title="E1 op E2 的形式"></a>E1 op E2 的形式</h3><blockquote>
+<p>如果E是E1 op E2形式的表达式，这里op是任何二元操作符，则E的后缀式为E1’E2’ op，这里E1’和E2’分别为E1和E2的后缀式。  </p>
+</blockquote>
+<p>这很好理解。  </p>
+<p><code>1+2</code> =&gt; <code>12+</code><br>以下是上一条规则：<br><code>1</code> =&gt; <code>1</code>的后缀式<br><code>2</code> =&gt; <code>2</code>的后缀式  </p>
+<h3 id="加上括号的-E"><a href="#加上括号的-E" class="headerlink" title="加上括号的 E"></a>加上括号的 E</h3><blockquote>
+<p>如果E是（E1）形式的表达式，则E1的后缀式就是E的后缀式  </p>
+</blockquote>
+<p>这条也好理解。  </p>
+<p><code>1+1</code> 的后缀式 与 <code>(1+1)</code> 的后缀式相同。  </p>
+<h2 id="中缀-gt-后缀"><a href="#中缀-gt-后缀" class="headerlink" title="中缀 -&gt; 后缀"></a>中缀 -&gt; 后缀</h2><p>A：现在给你派一批任务，将中缀表达式转换为后缀表达式，你能完成吗。<br>B：SO EASY！  </p>
+<h3 id="a-b"><a href="#a-b" class="headerlink" title="a + b"></a>a + b</h3><p>B: ab+  </p>
+<h3 id="a-b-e"><a href="#a-b-e" class="headerlink" title="(a+b)/e"></a>(a+b)/e</h3><p>B: （a+b)e/<br>B: (a+b) 与 a+b 后缀式应该相同。那：ab+e/<br>B：最后是这个吧 ab+e/  </p>
+<h3 id="a-b-c"><a href="#a-b-c" class="headerlink" title="(a+b)*c"></a>(a+b)*c</h3><p>B：跟上面差不多，ab+c*  </p>
+<h3 id="a-b-c-a-b-e"><a href="#a-b-c-a-b-e" class="headerlink" title="(a+b)*c-(a+b)/e"></a>(a+b)*c-(a+b)/e</h3><p>B: 不就是把前两部放一块儿了吗，可以先用括号包起来  ((a+b)<em>c)-((a+b)/e)，整体算一下 ((a+b)</em>c)((a+b)/e)-，括号内部再做转换</p>
+<p>B：ab+c*ab+e/-  </p>
+<h2 id="整这么复杂干啥"><a href="#整这么复杂干啥" class="headerlink" title="整这么复杂干啥"></a>整这么复杂干啥</h2><p>B: 这就完了吗。  </p>
+<p>A：完了，我说过了，很简单的。在构造后缀表达式的时候，只要考虑好运算符的优先级，就可万无一失  </p>
+<p>B：你整这么复杂干啥，中缀表达式看的挺爽，干嘛转成后缀呢？  </p>
+<p>A：嗯，中缀对于我们来说看的很爽，但对于代码实现来说，就很不爽了。  </p>
+<h3 id="计算器"><a href="#计算器" class="headerlink" title="计算器"></a>计算器</h3><blockquote>
+<p>用户输入了一串表达式：(a+b)*c-(a+b)/e<br>快～快用代码计算下结果！<br>过去5s……<br>10s……<br>怎么还没算出来呀！什么！你不会！好吧好吧，因为要考虑到运算符优先级，这个难度确实高。  </p>
+</blockquote>
+<p>biubiubiu～  </p>
+<p>试试这个，直接按以下规则计算即可。</p>
+<blockquote>
+<p>ab+c*ab+e/-  </p>
+</blockquote>
+<p>规则：</p>
+<blockquote>
+<p>字符按顺序出 stack 栈，<br>如果是数字，则添加到 byte 栈里，<br>如果是符号，则拿 byte 的栈顶两项数字，进行运算，将运算结果入栈，直到 stack 为空  </p>
+</blockquote>
+<p>代码如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">const</span> stack = [a, b,<span class="string">'+'</span>,c,<span class="string">'*'</span>,a,b,<span class="string">'+'</span>,e,<span class="string">'/'</span>,<span class="string">'-'</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">calculator</span>(<span class="params">arr</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> op = [<span class="string">'+'</span>, <span class="string">'-'</span>, <span class="string">'*'</span>, <span class="string">'/'</span>]</span><br><span class="line">  <span class="keyword">const</span> byte = []</span><br><span class="line">  <span class="keyword">while</span>(arr.length) &#123;</span><br><span class="line">    <span class="keyword">let</span> now = arr.shift()</span><br><span class="line">    <span class="keyword">const</span> index = op.indexOf(now)</span><br><span class="line">    <span class="comment">// 是符号</span></span><br><span class="line">    <span class="keyword">if</span>(index !== <span class="number">-1</span>) &#123;</span><br><span class="line">      <span class="comment">// 栈顶两元素</span></span><br><span class="line">      <span class="keyword">const</span> end = byte.pop(),</span><br><span class="line">            first = byte.pop();</span><br><span class="line">      <span class="keyword">switch</span>(index)&#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">          byte.push( first + end)</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">          byte.push( first - end)</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">          byte.push( first * end)</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">          byte.push( first / end)</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="comment">// 不是符号</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      byte.push(now)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">console</span>.log(byte)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大概是这样的<br>a =&gt; b =&gt; +  </p>
+<p>可以累加了 a + b = r1  </p>
+<p>继续出  </p>
+<p>r1 =&gt; c =&gt; *  </p>
+<p>可以累乘了  r1 * c = r2  </p>
+<p>继续出  </p>
+<p>r2 =&gt; a =&gt; b =&gt; +  </p>
+<p>可以累加了 a + b = r3  </p>
+<p>继续出  </p>
+<p>r2 =&gt; r3 =&gt; e =&gt; /  </p>
+<p>可以 除法 了 r3 / e = r4  </p>
+<p>继续出<br>r2 =&gt; r4 =&gt; -  </p>
+<p>可以减法了  </p>
+<p>r2 - r4 = r5  </p>
+<p>花费 0.000000001 s，结果是 r5。  </p>
+<p>因为不考虑优先级，所以按照顺序计算，就可以把后缀表达式计算完成。不仅代码实现快，运行的也快～这就是为什么把中缀转为后缀的原因。  </p>
+<h2 id="后-前缀表达式语言-LISP"><a href="#后-前缀表达式语言-LISP" class="headerlink" title="后/前缀表达式语言 LISP"></a>后/前缀表达式语言 LISP</h2><p>既然后/前缀表达式的执行效率高，那有没有后/前缀编程语言呢？  </p>
+<p>当然有。  </p>
+<p><img src="https://lisp-cn.com/wp-content/uploads/2019/11/2019112321554527.jpg" alt>  </p>
+<p>先看看它的代码如何：  </p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">setq</span> a <span class="number">10</span>)</span><br><span class="line">(<span class="name">setq</span> b <span class="number">20</span>)</span><br><span class="line">(<span class="name">format</span> <span class="literal">t</span> <span class="string">"~% A + B = ~d"</span> (<span class="name">+</span> a b))</span><br><span class="line">(<span class="name">format</span> <span class="literal">t</span> <span class="string">"~% A - B = ~d"</span> (<span class="name">-</span> a b))</span><br><span class="line">(<span class="name">format</span> <span class="literal">t</span> <span class="string">"~% A x B = ~d"</span> (<span class="name">*</span> a b))</span><br><span class="line">(<span class="name">format</span> <span class="literal">t</span> <span class="string">"~% B / A = ~d"</span> (<span class="name">/</span> b a))</span><br><span class="line">(<span class="name">format</span> <span class="literal">t</span> <span class="string">"~% Increment A by 3 = ~d"</span> (<span class="name">incf</span> a <span class="number">3</span>))</span><br><span class="line">(<span class="name">format</span> <span class="literal">t</span> <span class="string">"~% Decrement A by 4 = ~d"</span> (<span class="name">decf</span> a <span class="number">4</span>))</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">A + B = 30</span><br><span class="line">A - B = -10</span><br><span class="line">A x B = 200</span><br><span class="line">B / A = 2</span><br><span class="line">Increment A by 3 = 13</span><br><span class="line">Decrement A by 4 = 9</span><br><span class="line"></span><br><span class="line">//原文出自【易百教程】，商业转载请联系作者获得授权，非商业请保留原文链接:https://www.yiibai.com/lisp/lisp_operators.html</span><br></pre></td></tr></table></figure>
+<p>本文不是来推崇 lisp 的，你可以点击这篇文章了解更多：<br><a href="https://blog.csdn.net/code_for_fun/article/details/83304873" target="_blank" rel="noopener">上帝的lisp</a></p>
+<h2 id="中缀转后缀"><a href="#中缀转后缀" class="headerlink" title="中缀转后缀"></a>中缀转后缀</h2><p>B：emmm，后缀简单是简单，但写起来也太反人类了  </p>
+<p>A: 对呀，所以现代编程语言在计算机运算和代码可编写性上做了取舍，我们也不需要人肉换算逆波兰式了。不过，我们可以用代码先从中缀转后缀，再计算后缀表达式，来实现简单的计算器。  </p>
+<p>A：首先，我们得实现中缀转后缀，逻辑是这样的：  </p>
+<ul>
+<li>首先构造 S1 运算符栈，和 S2 结果栈。中缀表达式 str 栈</li>
+<li>str 按运算顺序从左到右出栈。  <ul>
+<li>当字符为数字时，直接压栈 S2  </li>
+<li>当字符为运算符时  <ul>
+<li>如果 S1 栈顶元素优先级高于当前字符，则将 S1 栈顶元素出栈，并压栈 S2，直到 S1 栈顶元素优先级低于当前字符。最后，将当前字符压栈 S1</li>
+<li>如果 S1 栈顶元素优先级低于当前字符，则当前字符压栈 S1  </li>
+</ul>
+</li>
+<li>当字符为 （ 时，直接压栈,之后字符按照以上规则压栈。  </li>
+<li>当字符为 ）时，取与最近的 （ 中间的运算符，重复以上步骤  </li>
+</ul>
+</li>
+<li>当 str 栈空，依次出 S1 的栈</li>
+</ul>
+<p>用 javascript 实现它  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">calculator</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> n = <span class="number">0</span>, charStack = [], numStack = [], reducerStr =  [], leftIndex = <span class="number">-1</span></span><br><span class="line">  <span class="keyword">const</span> op = &#123;</span><br><span class="line">    <span class="string">'+'</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="string">'-'</span> : <span class="number">1</span>,</span><br><span class="line">    <span class="string">'*'</span> : <span class="number">2</span>,</span><br><span class="line">    <span class="string">'/'</span> : <span class="number">2</span>,</span><br><span class="line">    <span class="string">'('</span> : <span class="number">3</span>,</span><br><span class="line">    <span class="string">')'</span> : <span class="number">3</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span>(n &lt; str.length) &#123;</span><br><span class="line">    <span class="keyword">const</span> byte = str[n]</span><br><span class="line">    <span class="comment">// 数字</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="regexp">/\d/</span>.test(byte)) &#123;</span><br><span class="line">      reducerStr.push(byte)</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="regexp">/\(|\)/</span>.test(byte)) &#123;</span><br><span class="line">      <span class="comment">// 左括号入栈</span></span><br><span class="line">      <span class="keyword">if</span>(byte === <span class="string">'('</span>) &#123;</span><br><span class="line">        charStack.push(byte)</span><br><span class="line">        leftIndex = n</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'左括号'</span>, byte)</span><br><span class="line">      <span class="comment">// 右括号出栈</span></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> nowChar = charStack.pop()</span><br><span class="line">        <span class="keyword">while</span>(nowChar &amp;&amp; nowChar !== <span class="string">'('</span>) &#123;</span><br><span class="line">          reducerStr.push(nowChar)</span><br><span class="line">          nowChar = charStack.pop()</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="comment">// 符号</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 字符栈顶元素</span></span><br><span class="line">      <span class="keyword">let</span> nowChar = charStack[charStack.length - <span class="number">1</span>]</span><br><span class="line">      <span class="keyword">while</span>(nowChar &amp;&amp; op[byte] &lt; op[nowChar] &amp;&amp; nowChar !== <span class="string">'('</span>) &#123;</span><br><span class="line">        charStack.pop()</span><br><span class="line">        reducerStr.push(nowChar)</span><br><span class="line">        nowChar = charStack[charStack.length - <span class="number">1</span>]</span><br><span class="line">      &#125;</span><br><span class="line">      charStack.push(byte)</span><br><span class="line">    &#125;</span><br><span class="line">    n++</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span>(charStack.length) &#123;</span><br><span class="line">    reducerStr.push(charStack.pop())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> reducerStr.join(<span class="string">''</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>便于理解，我写了一个简单的 demo ，让转换过程可视化。你可以戳以下链接去推理一边。  </p>
+<p><a href="../../../../template/rightMiddle.html">可视化理解转换过程</a></p>
+<p>我们实现了中缀转后缀，又实现了后缀表达式的计算，剩余的工作就是将这二者结合起来。这里就不演示了。  </p>
+<p><strong>完</strong></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1"><span class="toc-number">1.</span> <span class="toc-text">1+1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后缀表达式"><span class="toc-number">2.</span> <span class="toc-text">后缀表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#E-为常量或变量"><span class="toc-number">2.1.</span> <span class="toc-text">E 为常量或变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#E1-op-E2-的形式"><span class="toc-number">2.2.</span> <span class="toc-text">E1 op E2 的形式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#加上括号的-E"><span class="toc-number">2.3.</span> <span class="toc-text">加上括号的 E</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中缀-gt-后缀"><span class="toc-number">3.</span> <span class="toc-text">中缀 -&gt; 后缀</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#a-b"><span class="toc-number">3.1.</span> <span class="toc-text">a + b</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#a-b-e"><span class="toc-number">3.2.</span> <span class="toc-text">(a+b)/e</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#a-b-c"><span class="toc-number">3.3.</span> <span class="toc-text">(a+b)*c</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#a-b-c-a-b-e"><span class="toc-number">3.4.</span> <span class="toc-text">(a+b)*c-(a+b)/e</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#整这么复杂干啥"><span class="toc-number">4.</span> <span class="toc-text">整这么复杂干啥</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#计算器"><span class="toc-number">4.1.</span> <span class="toc-text">计算器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后-前缀表达式语言-LISP"><span class="toc-number">5.</span> <span class="toc-text">后/前缀表达式语言 LISP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中缀转后缀"><span class="toc-number">6.</span> <span class="toc-text">中缀转后缀</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

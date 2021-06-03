@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>从VSCODE插件开发到微创新 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>从VSCODE插件开发到微创新</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/06/13</time>
+            
+            
+          </div>
+          <p>必须有个吊炸天的副标题</p>
+<h2 id="从-前端群-说起"><a href="#从-前端群-说起" class="headerlink" title="从 前端群 说起"></a>从 前端群 说起</h2><blockquote>
+<p>海燕： 给大家安利一个 vscode 插件， custom-link ，可以便捷跳转到 api mock 系统查看接口文档  </p>
+</blockquote>
+<blockquote>
+<p>我的内心：我的天，这个插件，说大不大，说小不小，开发起来又不难，但用起来还挺有用的，解决了mock链接总需要在浏览器打开的痛点，简直是居家旅行装逼之利器……</p>
+</blockquote>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1560493058164&amp;di=1afd80abd421d445b3317b195c1103c5&amp;imgtype=0&amp;src=http%3A%2F%2Fpic.51yuansu.com%2Fpic3%2Fcover%2F02%2F40%2F85%2F59c2f60bb97c7_610.jpg" alt="图片"></p>
+<blockquote>
+<p>周三吃完午饭</p>
+</blockquote>
+<blockquote>
+<p>天宇：我们也来开发vscode插件吧，做个自动化发布，加上爬虫！ 加上webhook！发布结束必须得在微信群里通知，国际范儿十足，用起来倍儿棒！</p>
+</blockquote>
+<blockquote>
+<p>我：听起来不错，搞起来！！！  </p>
+</blockquote>
+<h2 id="VSCODE-插件-开发"><a href="#VSCODE-插件-开发" class="headerlink" title="VSCODE 插件 开发"></a>VSCODE 插件 开发</h2><p>开发语言：Typescript<br>平台: VSCODE  </p>
+<p><code>npm install -g yo generator-code</code>  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">yo code</span><br><span class="line"></span><br><span class="line"># ? What type of extension do you want to create? New Extension (TypeScript)</span><br><span class="line"># ? What&apos;s the name of your extension? HelloWorld</span><br><span class="line">### Press &lt;Enter&gt; to choose default for all options below ###</span><br><span class="line"></span><br><span class="line"># ? What&apos;s the identifier of your extension? helloworld</span><br><span class="line"># ? What&apos;s the description of your extension? LEAVE BLANK</span><br><span class="line"># ? Initialize a git repository? Yes</span><br><span class="line"># ? Which package manager to use? npm</span><br></pre></td></tr></table></figure>
+<p><code>按 F5 调试</code></p>
+<h2 id="我们要做什么"><a href="#我们要做什么" class="headerlink" title="我们要做什么"></a>我们要做什么</h2><blockquote>
+<p>一个能自动发布当前项目的插件，敲一行命令，或者点一个按钮就能完成发布流程</p>
+</blockquote>
+<h2 id="怎么做"><a href="#怎么做" class="headerlink" title="怎么做"></a>怎么做</h2><blockquote>
+<p>找海燕要接口</p>
+</blockquote>
+<blockquote>
+<p>我猜海燕会说：没空，丑拒  </p>
+</blockquote>
+<blockquote>
+<p>上回林潇分享的无头浏览器不错,让浏览器代替我们点点点</p>
+</blockquote>
+<blockquote>
+<p>可是……它太大了！对于一个插件而言！</p>
+</blockquote>
+<blockquote>
+<p>那就分析发布系统接口，nodejs 发请求执行相关操作  </p>
+</blockquote>
+<h2 id="从登录做起"><a href="#从登录做起" class="headerlink" title="从登录做起"></a>从登录做起</h2><p>先打开一个隐身窗口，NetWork上分析登录请求参数和返回参数  </p>
+<p><img src="https://img1.dxycdn.com/2019/0805/080/3360768203579680112-2.png" alt="登录">  </p>
+<p>登录请求要啥你就给他啥，怎么给，看以下代码  </p>
+<pre><code class="javascript"><span class="keyword">import</span> * <span class="keyword">as</span> request <span class="keyword">from</span> <span class="string">'request'</span>;
+request({
+    method: <span class="string">"post"</span>,
+    url: <span class="string">"http://assets-***.net/login"</span>,
+    headers: {
+        <span class="string">"Content-Type"</span>: <span class="string">'application/x-www-form-urlencoded'</span>,
+    },
+    form: {
+        <span class="string">"username"</span>: <span class="string">'不告诉你'</span>,
+        <span class="string">"password"</span>: <span class="string">"232323"</span>
+    }
+}, (error, response, body) =&gt; {
+    <span class="keyword">this</span>.cookie = response.request.headers.cookie
+    resolve(response.request.headers.cookie)
+})
+</code></pre>
+<p>为啥要登录呢，当然是为了拿到我们的小饼干(cookie)，在以后的身份校验请求上都会用到</p>
+<h2 id="发布分支接口"><a href="#发布分支接口" class="headerlink" title="发布分支接口"></a>发布分支接口</h2><p>同样的，我们先从看请求说起。<br><img src="https://img1.dxycdn.com/2019/0614/866/3351128918282498103-2.png" alt></p>
+<p>这里的请求参数传递方式又不一样了，是通过 <code>multipart/form-data;</code> 的方式传递的 </p>
+<p>通过搜索引擎，发现了 formData 库，可以用它来模拟表单格式发送，代码如下</p>
+<pre><code class="javascript">public publish() {
+    <span class="keyword">var</span> form = <span class="keyword">new</span> fromData();
+    form.append(<span class="string">'project'</span>, <span class="string">'jobmd_v3_dynamic'</span>)
+    form.append(<span class="string">'schedule'</span>, <span class="string">'assets-build-dynamic'</span>)
+    form.append(<span class="string">'args'</span>, <span class="built_in">JSON</span>.stringify({<span class="string">"assets-build-dynamic"</span>:{<span class="string">"target"</span>:<span class="string">"master"</span>},<span class="string">"git-send_type"</span>:<span class="string">"branch"</span>}))
+
+    <span class="keyword">var</span> request = http.request({
+    method: <span class="string">'post'</span>,
+    host: <span class="string">'assets-publish*****.net'</span>,
+    path: <span class="string">'/user/opt/addschedule'</span>,
+    headers: {
+        ...form.getHeaders(),
+        <span class="string">"Cookie"</span>: <span class="keyword">this</span>.cookie
+    }
+    });
+
+    form.pipe(request);
+
+    request.on(<span class="string">'response'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>{
+        <span class="built_in">console</span>.log(res);
+    });
+}
+</code></pre>
+<h2 id="我们也需要打包信息"><a href="#我们也需要打包信息" class="headerlink" title="我们也需要打包信息"></a>我们也需要打包信息</h2><p><img src="https://img1.dxycdn.com/2019/0614/229/3351110001099358346-2.png" alt><br>看来这是一个长链接，还需要一个token，那token哪儿来的呢？<br>看起来是拿cookie换的<br><img src="https://img1.dxycdn.com/2019/0614/698/3351110479988218385-2.png" alt>  </p>
+<pre><code class="typescript"><span class="keyword">public</span> getAccesstoken() {
+    <span class="built_in">console</span>.log(<span class="keyword">this</span>.cookie)
+    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> {
+        request({
+            method: <span class="string">"get"</span>,
+            url: <span class="string">"http://assets-p****.net/auth/accesstoken"</span>,
+            headers: {
+                <span class="string">"Cookie"</span>: <span class="keyword">this</span>.cookie
+            }
+        }, <span class="function">(<span class="params">error, response, body</span>) =&gt;</span> {
+            <span class="built_in">console</span>.log(<span class="string">'拿到token'</span>)
+            <span class="built_in">console</span>.log(<span class="built_in">JSON</span>.parse(body).accesstoken)
+            <span class="keyword">this</span>.accesstoken = <span class="built_in">JSON</span>.parse(body).accesstoken
+            resolve()
+        })
+    })
+}
+</code></pre>
+<p>怎么发起长链接请求呢，瞬间想到了socket.io，但不能直接用，我们得分析分析发布系统用的什么包。<br><img src="https://img1.dxycdn.com/2019/0614/235/3351111087726099297-2.png" alt><br>感谢开发者没有混淆代码，很容易就找到了位置，很显然，他用的原生 websocket 对象。<br>so,我们只要找到一个能发socket的node包就行了。 再加上我们拿到的token</p>
+<pre><code class="typescript">
+<span class="keyword">import</span> * <span class="keyword">as</span> websocket <span class="keyword">from</span> <span class="string">'websocket'</span>
+<span class="keyword">public</span> listener() {
+    <span class="keyword">var</span> WebSocketClient = websocket.client;
+    <span class="keyword">var</span> client = <span class="keyword">new</span> WebSocketClient();
+    client.on(<span class="string">'connectFailed'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">error</span>) </span>{
+        <span class="built_in">console</span>.log(<span class="string">'Connect Error: '</span> + error.toString());
+    });
+
+    client.on(<span class="string">'connect'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">connection</span>) </span>{
+        <span class="built_in">console</span>.log(<span class="string">'WebSocket Client Connected'</span>);
+        connection.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">error</span>) </span>{
+            <span class="built_in">console</span>.log(<span class="string">"Connection Error: "</span> + error.toString());
+        });
+        connection.on(<span class="string">'close'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{
+            <span class="built_in">console</span>.log(<span class="string">'echo-protocol Connection Closed'</span>);
+        });
+        connection.on(<span class="string">'message'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">message</span>) </span>{
+            <span class="keyword">if</span> (message.type === <span class="string">'utf8'</span>) {
+                <span class="built_in">console</span>.log(<span class="string">"Received: '"</span> + message.utf8Data + <span class="string">"'"</span>);
+            }
+        });
+    });
+
+    client.connect(<span class="string">`wss://assets-publis***.net/?access_token=<span class="subst">${<span class="keyword">this</span>.accesstoken}</span>`</span>, <span class="string">'echo-protocol'</span>);
+}
+</code></pre>
+<p>这样，发布的信息就打印到了控制台，至于后面在vscode如何展示，那就简单的不得了，就不在这儿分享了。  </p>
+<h2 id="从插件开发到微创新"><a href="#从插件开发到微创新" class="headerlink" title="从插件开发到微创新"></a>从插件开发到微创新</h2><p>什么是微创新：现有阶段，在版本快速迭代的时候，我们没有多余的时间和精力来做出像 Api mocker、sentry或者小程序开发文档这种耗时耗力的产品，那我们可以找出项目中的小痛点，如果解决掉它，确实能提高一定的效率，那么就尝试解决它。生产力的小提升 -&gt; 微创新</p>
+<h2 id="谁痛苦，谁解决"><a href="#谁痛苦，谁解决" class="headerlink" title="谁痛苦，谁解决"></a>谁痛苦，谁解决</h2><p>像mock链接跳转、发布自动化，代码格式这类优化，都是开发人员在日常工作中被折磨的不像样，才去尝试解决它。你迟早会解决这类问题！！！  </p>
+<h2 id="他痛苦，你也给他解决了呗"><a href="#他痛苦，你也给他解决了呗" class="headerlink" title="他痛苦，你也给他解决了呗"></a>他痛苦，你也给他解决了呗</h2><p>像人才小程序里的测试暗门，像后端写的删除简历、解绑账号的接口，简简单单的几行代码，就可以节省QA人员的很多无脑流程。QA大佬心情好了，也不会随便给我们指bug了<br><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1560450371376&amp;di=8faced84043f792ffd341dee4dbe38ba&amp;imgtype=0&amp;src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Ff456f6abf04432666eccb1456ea64cc5c090161d.gif" alt></p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><blockquote>
+<ul>
+<li>产生不产生价值重要吗？好玩就够了！   –尼古拉斯.杜 </li>
+</ul>
+</blockquote>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><p><a href="https://code.visualstudio.com/api/get-started/your-first-extension" target="_blank" rel="noopener">https://code.visualstudio.com/api/get-started/your-first-extension</a></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#从-前端群-说起"><span class="toc-number">1.</span> <span class="toc-text">从 前端群 说起</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VSCODE-插件-开发"><span class="toc-number">2.</span> <span class="toc-text">VSCODE 插件 开发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我们要做什么"><span class="toc-number">3.</span> <span class="toc-text">我们要做什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#怎么做"><span class="toc-number">4.</span> <span class="toc-text">怎么做</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#从登录做起"><span class="toc-number">5.</span> <span class="toc-text">从登录做起</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发布分支接口"><span class="toc-number">6.</span> <span class="toc-text">发布分支接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我们也需要打包信息"><span class="toc-number">7.</span> <span class="toc-text">我们也需要打包信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#从插件开发到微创新"><span class="toc-number">8.</span> <span class="toc-text">从插件开发到微创新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#谁痛苦，谁解决"><span class="toc-number">9.</span> <span class="toc-text">谁痛苦，谁解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#他痛苦，你也给他解决了呗"><span class="toc-number">10.</span> <span class="toc-text">他痛苦，你也给他解决了呗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">11.</span> <span class="toc-text">最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">12.</span> <span class="toc-text">引用</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>如何搞定接口并发？想学我教你呀！ | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>如何搞定接口并发？想学我教你呀！</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2021/03/05</time>
+            
+            
+          </div>
+          <p>关于限流</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近和龙哥在做一款证件照生成项目，大概流程是，前端给一张 base64 图片，后端调用百度的 ai 抠图以及获取图片中人体关键点信息 接口，然后将结果合并返回给前端。</p>
+<p>百度这两个服务的每日调用次数是够用的， 5w/日。但他对并发做了限制，默认 QPS = 2。</p>
+<h2 id="什么是-QPS"><a href="#什么是-QPS" class="headerlink" title="什么是 QPS"></a>什么是 QPS</h2><p>简单来说，就是服务每秒能接收到的最大请求，比如 QPS 为 2，那服务每秒最多接受两个请求，多出来的请求会被忽略掉。</p>
+<blockquote>
+<p>按 QPS（并发量）计费： 调用量免费，免费 QPS 默认为 2，如果您通过百度云的企业认证，接口的免费 QPS 将扩充至 5。同时您可以根据业务需求随时购买扩充 QPS，QPS 可包月购买，也可按天单独购买，灵活多样，适应多场景需求。 当前人体关键点识别、人体检测与属性识别、人流量统计、人像分割、手势识别 5 个接口支持在线购买 QPS。 注意：同一个账号下多个应用共享接口 QPS。</p>
+</blockquote>
+<p>这个 QPS 是非常贵的：</p>
+<table>
+<thead>
+<tr>
+<th>购买 QPS 数量</th>
+<th>按月购买</th>
+<th>按天购买</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0&lt;QPS&lt;=10</td>
+<td>500 元/月/QPS</td>
+<td>50 元/天/QPS</td>
+</tr>
+<tr>
+<td>10&lt;QPS&lt;=50</td>
+<td>400 元/月/QPS</td>
+<td>40 元/天/QPS</td>
+</tr>
+<tr>
+<td>50&lt;QPS&lt;=100</td>
+<td>300 元/月/QPS</td>
+<td>30 元/天/QPS</td>
+</tr>
+<tr>
+<td>100&lt;QPS</td>
+<td>200 元/月/QPS</td>
+<td>20 元/天/QPS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="解决-QPS-问题"><a href="#解决-QPS-问题" class="headerlink" title="解决 QPS 问题"></a>解决 QPS 问题</h2><p>因为我负责后端服务，作为中间人给前端做请求转发，所以要控制对第三方接口的调用量，不能让每秒并发超过 2（这个数值可以提升，取决于钱包厚度，但总有个上限）。</p>
+<p>为了方便描述，百度 api 在下文中都被称作 第三方接口</p>
+<h3 id="试错法"><a href="#试错法" class="headerlink" title="试错法"></a>试错法</h3><p>这个方法很容易想到，当前端请求到达时，我先将它挂起，然后直接去调用第三方，如果返回结果符合预期，则直接将结果返回给前端，否则，等待一段时间，再发起请求，直到结果符合预期。</p>
+<p>但仔细想想，这个方法问题很多：</p>
+<ul>
+<li>等待多少时间？</li>
+<li>用第三方请求结果去验证，本身就是对资源的一种消耗，十分不优雅。</li>
+<li>如果有大量前端并发请求到达，有很多无用的请求将发出。</li>
+</ul>
+<p>这个方法肯定是行不通的。</p>
+<h3 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h3><h4 id="误区"><a href="#误区" class="headerlink" title="误区"></a>误区</h4><p>既然每秒并发为 2，那是不是意味着，1/2 秒 发一个请求？那我在 0-1/2s 时设置一个变量 count，当超过一时，则不受理请求。<br>但是仔细想想，这样也是有问题的。<br>举个例子：如果两个请求同时到达，按照我们的流程，它们将串行调用。但按照并发为 2 的限制，他们完全可以同时调用。</p>
+<p><img src="../../../../imgs/1491615049339_.pic.jpg" alt="img"></p>
+<h4 id="普通计数器"><a href="#普通计数器" class="headerlink" title="普通计数器"></a>普通计数器</h4><p>我们可以启动一个以 1s 为间隔的定时器，在一个周期内，设置一个计数器 count = 2。每当请求来临时，count -= 1。当 count 为 0，请求则挂起。等下个周期再执行。</p>
+<p><img src="../../../../imgs/1501615049507_.pic.jpg" alt="img"></p>
+<p>但还是存在问题，当两个周期中间有请求调用时，我们的 count 就失效了，这里同时收到了三个请求，但间隔小于 1s。<br><img src="../../../../imgs/1521615049606_.pic.jpg" alt="img"></p>
+<h3 id="滑动窗口计数器"><a href="#滑动窗口计数器" class="headerlink" title="滑动窗口计数器"></a>滑动窗口计数器</h3><p>普通计数器的问题在于临界值问题，在临界值，突然增多的请求会绕过我们的计数器策略，那能不能缩短时间间隔，来保证策略准确率的提升？这就引出了另一经典的并发限流算法：滑动窗口计数器。<br><img src="../../../../imgs/1531615049771_.pic.jpg" alt="img"></p>
+<p>在我们的案例中，我们可以将一秒切割成两个分别为 500ms 的格子，每个格子都有自己的 count，当请求到达时，累加所有格子的 count，小于并发数字，则执行下一步，否则挂起。<br>我们可以用数组来储存格子，比如 slide = [0]，当前只有一个格子，且 count = 0。<br>随着时间的推移，格子数也增加，比如 500ms 时，slide = [0, 0]。<br>当 1s 时，由于总格子设置为 2，超出这个数字，则 slide 需要删除第一个格子：slide.unshift()。<br>代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Slide</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>() &#123;</span><br><span class="line">    <span class="comment">// 格子数组</span></span><br><span class="line">    <span class="keyword">this</span>.node = [<span class="number">0</span>];</span><br><span class="line">    <span class="comment">// 最多能分两个格子</span></span><br><span class="line">    <span class="keyword">this</span>.maxNode = <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// 最大并发数</span></span><br><span class="line">    <span class="keyword">this</span>.qps = <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// 时间间隔</span></span><br><span class="line">    <span class="keyword">this</span>.inter = (<span class="number">1</span> / <span class="keyword">this</span>.qps) * <span class="number">1000</span>;</span><br><span class="line">    <span class="comment">// 未执行的任务列表</span></span><br><span class="line">    <span class="keyword">this</span>.task = [];</span><br><span class="line">    <span class="keyword">this</span>.interval();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">get</span>(res) &#123;</span><br><span class="line">    <span class="comment">// 保存接口时间戳</span></span><br><span class="line">    <span class="keyword">const</span> allCount = <span class="keyword">this</span>.node.reduce(<span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b);</span><br><span class="line">    <span class="keyword">if</span> (allCount &lt; <span class="keyword">this</span>.qps) &#123;</span><br><span class="line">      <span class="keyword">this</span>.node[<span class="keyword">this</span>.node.length - <span class="number">1</span>] = <span class="keyword">this</span>.node[<span class="keyword">this</span>.node.length - <span class="number">1</span>] + <span class="number">1</span>;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">'执行后node'</span>, <span class="keyword">this</span>.node[<span class="keyword">this</span>.node.length - <span class="number">1</span>], res);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 请求挂起</span></span><br><span class="line">      <span class="keyword">this</span>.task.push(res);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  interval() &#123;</span><br><span class="line">    <span class="keyword">const</span> id = setInterval(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>.node.length &gt;= <span class="keyword">this</span>.maxNode) &#123;</span><br><span class="line">        <span class="keyword">this</span>.node.shift();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 还能增加格子</span></span><br><span class="line">      <span class="keyword">this</span>.node.push(<span class="number">0</span>);</span><br><span class="line">    &#125;, <span class="keyword">this</span>.inter);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> slide = <span class="keyword">new</span> Slide();</span><br><span class="line"></span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  slide.get(<span class="number">300</span>);</span><br><span class="line">  slide.get(<span class="number">300</span>);</span><br><span class="line">  slide.get(<span class="number">300</span>);</span><br><span class="line">  slide.get(<span class="number">300</span>);</span><br><span class="line">  slide.get(<span class="number">300</span>);</span><br><span class="line">&#125;, <span class="number">100</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  slide.get(<span class="number">260</span>);</span><br><span class="line">  slide.get(<span class="number">260</span>);</span><br><span class="line">&#125;, <span class="number">260</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  slide.get(<span class="number">500</span>);</span><br><span class="line">&#125;, <span class="number">500</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  slide.get(<span class="number">800</span>);</span><br><span class="line">&#125;, <span class="number">800</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  slide.get(<span class="number">1000</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  slide.get(<span class="number">1500</span>);</span><br><span class="line">&#125;, <span class="number">1500</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  slide.get(<span class="number">1900</span>);</span><br><span class="line">  slide.get(<span class="number">2000</span>);</span><br><span class="line">&#125;, <span class="number">1900</span>);</span><br></pre></td></tr></table></figure>
+<p>这个算法完美了吗？不，还不够。至少它存在以下几个问题：</p>
+<ul>
+<li>时间间隔被分成了多个格子，很显然，定时器执行的越频繁，咱们系统的性能消耗的越多。</li>
+<li>我们需要额外的内存空间来存储格子，格子分的越多，需要的空间越大</li>
+<li>这个算法在一开始就可以接受大量请求，这是好事儿吗？不，你的摩托车在冬天启动前还要预热一下呢。</li>
+</ul>
+<h4 id="冷启动"><a href="#冷启动" class="headerlink" title="冷启动"></a>冷启动</h4><p>所以这里也要普及一个知识点</p>
+<blockquote>
+<p>Warm Up，即冷启动/预热的方式。当系统长期处于低水位的情况下，流量突然增加时，直接把系统拉升到高水位可能瞬间把系统压垮。通过”冷启动”，让通过的流量缓慢增加，在一定时间内逐渐增加到阈值上限，给冷系统一个预热的时间，避免冷系统被压垮。</p>
+</blockquote>
+<p>比如你预计正常系统并发是 1000，你写的滑动窗口算法很争气，系统刚启动，用户们就发来了 1000 个请求，因为没超过阈值，请求都应该被同时处理，但你的数据库也刚刚启动，各种缓存策略还没准备好，然后你的系统就和你没预热的摩托车一样半路熄火了。</p>
+<h3 id="令牌桶算法"><a href="#令牌桶算法" class="headerlink" title="令牌桶算法"></a>令牌桶算法</h3><p>这是我最终采用的算法，也是后端处理并发限流场景中用的比较多的算法。<br><img src="../../../../imgs/20161109175913747.png" alt="img"><br>令牌桶是一个桶，装令牌的（废话！）。它的容积有限，只能装 N 个令牌。刚开始是空的，我们的代码每隔一段时间向他加一个令牌，直到桶里的令牌数变为 N。</p>
+<p>当请求到来时，先去令牌桶取令牌，如果有令牌，则请求可以被处理，处理完成，删除令牌。否则请求不能被处理或者暂时挂起之后有令牌了再处理（取决于你的业务场景！）</p>
+<p>在我的业务场景中，不希望返回前端一个接口繁忙的错误，这样会增加前端的心智负担。当请求被挂起后，如果有新令牌被添加，则直接执行挂起的请求，对前端来说，只是等的稍微久了一点。</p>
+<p>所以我对以上流程做了修改：</p>
+<p><img src="../../../../imgs/1551615051014_.pic_hd.jpg" alt="img"></p>
+<p>接下来讲讲代码流程。我是用的 eggjs 框架。<br>在请求方法中：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> bucketId = <span class="keyword">await</span> <span class="keyword">this</span>.app.tokenBucket.getBucket();</span><br><span class="line"><span class="keyword">const</span> bodyAndRmove = [<span class="keyword">this</span>.getPassportPhoto(imgStr), <span class="keyword">this</span>.removeBg(imgStr)];</span><br><span class="line"><span class="keyword">const</span> [bodyInfo, removeImg] = <span class="keyword">await</span> <span class="built_in">Promise</span>.all(bodyAndRmove);</span><br><span class="line"><span class="keyword">this</span>.app.tokenBucket.delBucket(bucketId);</span><br></pre></td></tr></table></figure>
+<p>getBucket 是获取令牌的函数，注意它是异步函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">'use strict'</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = <span class="class"><span class="keyword">class</span> <span class="title">TokenBucket</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>() &#123;</span><br><span class="line">    <span class="comment">// 2次/s</span></span><br><span class="line">    <span class="keyword">this</span>.maxLimt = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">this</span>.timer = <span class="number">1000</span> * (<span class="number">1</span> / <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">this</span>.maxBucket = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">this</span>.bucketList = [];</span><br><span class="line">    <span class="keyword">this</span>.taskList = [];</span><br><span class="line">    <span class="keyword">this</span>.interval();</span><br><span class="line">  &#125;</span><br><span class="line">  getBucket() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> hasBucket = <span class="keyword">this</span>.runTask(&#123; resolve &#125;);</span><br><span class="line">      <span class="keyword">if</span> (hasBucket) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">'no bucket, push in tasklist'</span>);</span><br><span class="line">      <span class="comment">// 没令牌先把请求挂起，等有令牌时执行</span></span><br><span class="line">      <span class="keyword">this</span>.taskList.push(resolve);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  runTask(&#123; resolve &#125;) &#123;</span><br><span class="line">    <span class="keyword">const</span> item = <span class="keyword">this</span>.bucketList.filter(<span class="function">(<span class="params">item</span>) =&gt;</span> !item.used);</span><br><span class="line">    <span class="comment">// 无可用令牌</span></span><br><span class="line">    <span class="keyword">if</span> (!item.length) &#123;</span><br><span class="line">      <span class="built_in">console</span>.error(<span class="string">'入栈'</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'执行'</span>, item.length, item);</span><br><span class="line">    <span class="keyword">const</span> firstItem = item[<span class="number">0</span>];</span><br><span class="line">    resolve(firstItem.id);</span><br><span class="line">    firstItem.used = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/** 请求完成，需删除对应令牌 */</span></span><br><span class="line">  delBucket(id) &#123;</span><br><span class="line">    <span class="keyword">const</span> index = <span class="keyword">this</span>.bucketList.findIndex(<span class="function">(<span class="params">item</span>) =&gt;</span> item.id === id);</span><br><span class="line">    <span class="keyword">if</span> (index === <span class="number">-1</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'删除令牌'</span>);</span><br><span class="line">    <span class="keyword">this</span>.bucketList.splice(index, <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 每隔 timer 时间，往bucket 里添加令牌，如果队列里有任务，添加完令牌立即执行任务</span></span><br><span class="line">  interval() &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'令牌桶状态'</span>, <span class="keyword">this</span>.bucketList);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.bucketList.length &lt; <span class="keyword">this</span>.maxBucket) &#123;</span><br><span class="line">      <span class="keyword">const</span> random = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime() + <span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * <span class="number">1000</span>);</span><br><span class="line">      <span class="keyword">this</span>.bucketList.push(&#123;</span><br><span class="line">        id: random,</span><br><span class="line">        used: <span class="literal">false</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> item = <span class="keyword">this</span>.bucketList.filter(<span class="function">(<span class="params">item</span>) =&gt;</span> !item.used);</span><br><span class="line">    <span class="comment">// 有令牌，队列有任务，优先执行</span></span><br><span class="line">    <span class="keyword">if</span> (item.length &amp;&amp; <span class="keyword">this</span>.taskList.length) &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">'运行队列任务'</span>);</span><br><span class="line">      <span class="keyword">const</span> resolve = <span class="keyword">this</span>.taskList.shift();</span><br><span class="line">      <span class="keyword">this</span>.runTask(&#123;</span><br><span class="line">        resolve,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> id = setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.interval();</span><br><span class="line">      clearTimeout(id);</span><br><span class="line">    &#125;, <span class="keyword">this</span>.timer);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是-QPS"><span class="toc-number">2.</span> <span class="toc-text">什么是 QPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决-QPS-问题"><span class="toc-number">3.</span> <span class="toc-text">解决 QPS 问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#试错法"><span class="toc-number">3.1.</span> <span class="toc-text">试错法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计数器"><span class="toc-number">3.2.</span> <span class="toc-text">计数器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#误区"><span class="toc-number">3.2.1.</span> <span class="toc-text">误区</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#普通计数器"><span class="toc-number">3.2.2.</span> <span class="toc-text">普通计数器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#滑动窗口计数器"><span class="toc-number">3.3.</span> <span class="toc-text">滑动窗口计数器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#冷启动"><span class="toc-number">3.3.1.</span> <span class="toc-text">冷启动</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#令牌桶算法"><span class="toc-number">3.4.</span> <span class="toc-text">令牌桶算法</span></a></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

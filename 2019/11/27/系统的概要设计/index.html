@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>系统的概要设计 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>系统的概要设计</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/11/27</time>
+            
+            
+          </div>
+          <p>小组分享记录  </p>
+<blockquote>
+<p>ppt 由nodeppt 制作，地址：<a href="https://github.com/qqqdu/myppt/blob/master/mark.md" target="_blank" rel="noopener">https://github.com/qqqdu/myppt/blob/master/mark.md</a></p>
+</blockquote>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><h3 id="基础架构"><a href="#基础架构" class="headerlink" title="基础架构"></a>基础架构</h3><p>技术选型 操作系统 编程语言 技术框架 第三方库<br>强调选择能力，技术前瞻性和判断力<br>大中台小前台<br>分解出业务无关的技术</p>
+<h3 id="业务架构"><a href="#业务架构" class="headerlink" title="业务架构"></a>业务架构</h3><p>业务系统的分解能力<br>领域问题：领域的用户群面临的普遍需求。<br>没有需求分析，就没有业务架构。需求分析需要占1/3，第二步就是系统的概要设计。  </p>
+<h3 id="系统概要设计"><a href="#系统概要设计" class="headerlink" title="系统概要设计"></a>系统概要设计</h3><p>对系统进行分解的能力，明确子系统职责边界和系统协议，把系统框架搭建起来。<br>分解系统的标准：子系统如何分解模块，模块如何分解类、函数。  </p>
+<h2 id="项目案例"><a href="#项目案例" class="headerlink" title="项目案例"></a>项目案例</h2><p><a href="https://so.m.sm.cn/api/rest?method=video.index&amp;format=html&amp;alink=uu&amp;vinline=on&amp;uc_param_str=dnntnwvepffrgibijbprsvdsmelood&amp;dn=34671592379-f6935271&amp;nt=1&amp;nw=4G&amp;ve=12.7.4.1054&amp;pf=145&amp;fr=android&amp;gi=bTkwBMv8uZT9B1HDircSi4WiIfh4u5wp0%2BTOtfwRj%2BYiOys%3D&amp;bi=34464&amp;pr=UCMobile&amp;sv=ucrelease&amp;ds=bTkwBNtG7Dn5%2Fm%2FpqJIkCapjAE4iKSnTQ8fuQphVOYQglw%3D%3D&amp;me=AASUykpUxs%2FwWJdqvpJc2zYa&amp;lo=AAQ%2FJDdbUVTj%2FurM6xuCLCy3Pt406oY%2FN9jB9zDdhOthhrtHYl7%2F3ydLeAVCk6TFD96KjqoQ%2FL43yddCNd9jTpnAomD53lU0Pw9374iK0QnYtVddo3L5Yl9s2iG3lgwspCD1Ds90hX7DB0nAmQbssR1v&amp;od=AARD6X%2FUiP%2BjXqcp%2BtU%2BIgzyWVBjCqqZ4%2FlaOUOIUr5zHU4A6qbVMkTVkFpem3sNKBE%3D&amp;from=ucframe&amp;q=%E4%BA%8E%E8%B0%A6%E5%92%8C%E7%88%B6%E4%BA%B2%E4%BF%AE%E6%B5%B7%E5%BA%95%E9%9A%A7%E9%81%93&amp;sc_frm=video&amp;sc_stype_frm=video_strong&amp;rom=video_list&amp;url=https%3A%2F%2Fmparticle.uc.cn%2Fvideo.html%3Fuc_param_str%3Dfrdnsnpfvecpntnwprdssskt%23%21wm_aid%3D064d4fa43b3f45faaf3a6038136b0316%21%21wm_id%3D5e60456b098d41ba9f2bb6d0a26495d6" target="_blank" rel="noopener">真实案例</a></p>
+<h2 id="于大爷挖隧道"><a href="#于大爷挖隧道" class="headerlink" title="于大爷挖隧道"></a>于大爷挖隧道</h2><ul>
+<li>美国人<code>提出需求[1]</code>，在西海岸和东海岸建一条海底隧道。  </li>
+<li>于大爷和他父亲接需求，草草的进行了 <code>需求分析[2]</code>，<br>并 <code>签了合同[3]</code></li>
+<li><code>两人[4]</code> 带着铁锹就赶去了海岸，一边一个开始挖。  </li>
+<li>项目竣工了，发现两个人没 <code>碰面[5]</code>，导致修了<code>两条隧道[6]</code>  </li>
+<li><code>美国人很满意[7]</code>  </li>
+</ul>
+<h2 id="于大爷复盘会"><a href="#于大爷复盘会" class="headerlink" title="于大爷复盘会"></a>于大爷复盘会</h2><p>拿到了两份工资的于大爷和他父亲把上面的事儿告诉了他的架构师儿子：郭小宝。  </p>
+<p>小宝意识到事情不简单，虽然这次 “隧道项目” 美国人给了两份工资，但这事儿要发生软件项目开发周期上，那于大爷和他父亲就危险了。于是小宝仔仔细细回顾了整件事情。  </p>
+<p>毫无疑问，美国人就是产品经理，于谦是开发组组长，他父亲则是组员。</p>
+<h3 id="提出需求"><a href="#提出需求" class="headerlink" title="提出需求"></a>提出需求</h3><blockquote>
+<p>美国人<code>提出需求[1]</code>，在西海岸和东海岸建一条海底隧道。</p>
+</blockquote>
+<p>美国人这个需求就很不地道，需求最起码要满足三要素：谁在哪儿遇到了什么问题。而这里只说了要建条海底隧道，那这个需求该如何提出呢？  </p>
+<p>比如，  </p>
+<p>背景是：水深火热的美国人想去西海岸到东海岸（东海岸火锅好吃点）涮火锅，但飞机票太贵，开车去比较划算，而目前二者之间没有公路<br>解决方案是，在东海岸西海岸建一条海底隧道。<br>期望达到的目的：把火锅带到每一个美国家庭。<br>具体想达到的目标是：每年有100000车流量，每辆车收取 100$</p>
+<h3 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h3><blockquote>
+<p>于大爷和他父亲接需求，进行了 <code>需求分析[2]</code> 并 <code>签了合同[3]</code>（排期）： </p>
+</blockquote>
+<p>事实上于大爷和他父亲并没有做需求分析，如果他们做了需求分析，那这个糟糕的项目就不会接下来，也不会签订合同。  </p>
+<p>作为“开发组组长”，于谦并没有对糟糕的需求文档说不。  </p>
+<h4 id="拒绝不规范的需求文档"><a href="#拒绝不规范的需求文档" class="headerlink" title="拒绝不规范的需求文档"></a>拒绝不规范的需求文档</h4><p>首先，”在西海岸和东海岸建一条海底隧道”,这是需求吗？不，这是方案。当你的产品经理提出的不是需求时，你可以拒绝他，让他重新编写需求文档。  </p>
+<h4 id="需求的紧急度"><a href="#需求的紧急度" class="headerlink" title="需求的紧急度"></a>需求的紧急度</h4><p>其次，假定美国人提出了需求：建隧道是为了解决美国人涮火锅问题。这是痛点吗？美国人吃不吃火锅重要吗？紧急吗？非得这个时候建隧道吗？能不能降优先级？我看让纽约人民尽早扭上大秧歌更紧急。  </p>
+<h4 id="最佳方案"><a href="#最佳方案" class="headerlink" title="最佳方案"></a>最佳方案</h4><p>再假定，美利坚人民吃火锅的欲望很强烈，必须得在年底圣诞节前吃上火锅，吃不上就要在白宫门口搞一道“美丽的风景线”。但建隧道是唯一选择吗？能不能找其他解决方案，比如外包给中国建海上高铁，或者用顺丰速运火锅底料走空运。（最佳方案）  </p>
+<h4 id="排期"><a href="#排期" class="headerlink" title="排期"></a>排期</h4><p>最后，就算美利坚人就喜欢开车到东海岸，吃着火锅唱着歌，需求是正确的、是优先的，方案是合理的。最终于大爷签了合同，也不知道合同里填的项目周期是多少，但在需求分析之后直接给出项目周期，显然不是一个好节点。这就引出了后面的话题：系统的概要分析。  </p>
+<h4 id="开发的觉悟"><a href="#开发的觉悟" class="headerlink" title="开发的觉悟"></a>开发的觉悟</h4><p>总结下需求分析阶段于大爷要做的事情：  </p>
+<ul>
+<li>拒绝不规范的需求文档  </li>
+<li>审查项目的痛点和紧急度  </li>
+<li>协助产品选择最佳技术方案  </li>
+<li>排期前先做概要设计</li>
+</ul>
+<h3 id="系统的概要设计"><a href="#系统的概要设计" class="headerlink" title="系统的概要设计"></a>系统的概要设计</h3><p>假设，需求分析一切的一切都是顺利进行的，接下来美国佬虎视眈眈的看着于大爷，等着他数人头、定时间、签合同。  </p>
+<p>郭小宝：显然不行，我们还要进一步分析。<code>合同(排期)</code>这种东西可不能乱来。  </p>
+<p>于大爷是这么做的：签完合同，扛着铁锹就和他父亲一起去了，一个在东边开始修，一个从西面开始修。  </p>
+<h4 id="模块划分"><a href="#模块划分" class="headerlink" title="模块划分"></a>模块划分</h4><p>于老师将整个项目分为两个模块：  </p>
+<p>东海岸———————————_——————————————西海岸<br>于谦  ———————————_——————————————于谦父亲  </p>
+<p>按他的设想，这样分后面做起来肯定没问题，碰面了再将两段隧道的口子对在一起，但他低估了对口子的难度。事实上这种分法很糟糕。   </p>
+<p>一是分的粒度太大！这导致了双方无法准确的预估工作量。合同上的工期一定不会准确。 </p>
+<p>二是项目进度难以估计，畅想这个场景。  </p>
+<blockquote>
+<p>美国人：谦儿哥，现在项目进度如何？<br>于谦：现在具体到哪儿不知道，就看见个牌子写着“拉斯维加斯”。<br>美国人：那多久能修通呢？<br>于谦：不知道呀，先修修看，迟早有碰面那一天。  </p>
+</blockquote>
+<p>三是开发过程中于谦和他父亲每天的计划无法制定，比如事先说好每天修 1 里地，第一天海底淤泥比较少，谦大爷用铁锹挖的快一点，挖了 1.2 里，第二天珊瑚礁比较多，挖的很慢，挖了 0.5 里，那第三天要挖多少才能把项目周期赶回来呢？  </p>
+<p>那么，如果让小宝给谦大爷划分项目，该怎么分呢？  </p>
+<p>假设东西海岸有这些城市：  </p>
+<p>旧金山、奥克兰、圣何塞，拉斯维加斯，洛杉矶、长滩、圣迭戈，加利福尼亚<code>（需求列表）</code></p>
+<p>将城市分段归大类：<code>(模块划分)</code> </p>
+<ul>
+<li>旧金山–奥克兰</li>
+<li>奥克兰–圣何塞</li>
+<li>圣何塞–拉斯维加斯</li>
+<li>拉斯维加斯–洛杉矶</li>
+<li>洛杉矶–长滩</li>
+<li>…</li>
+</ul>
+<p>这样，这几大类都可以各自动工了，但这样有个问题，假设第一条隧道还没修到 奥克兰，第二条隧道已经开始修了。它的起点就是奥克兰，它需要从第一段的最后开始修起，后者依赖前者<code>（模块间耦合了）</code>。  </p>
+<p>小宝想了个好办法，他规定了每一段隧道的起点坐标和终点坐标（接口），这样各个隧道间不会有依赖关系<code>（解耦）</code>，各自内部开工<code>（内聚）</code>。  </p>
+<p>还没完，拿 旧金山–奥克兰 这段路举例子，它还是有些大，我们还需进一步分类<code>（细化扩展）</code>。按照距离和海底环境又分成了好多小段。</p>
+<p>对于模块划分，我们尽量做到 高内聚，低耦合。对于大模块可以继续细分成多个小模块。  </p>
+<h5 id="一切皆需解耦"><a href="#一切皆需解耦" class="headerlink" title="一切皆需解耦"></a>一切皆需解耦</h5><p>类、模块、函数或方法  </p>
+<p>前后端联调  </p>
+<p>mock  </p>
+<p>微服务</p>
+<h4 id="技术路线"><a href="#技术路线" class="headerlink" title="技术路线"></a>技术路线</h4><p>当模块细分好之后，于大爷和他父亲扛着铁锹来到了旧金山海岸，发现了一个致命的问题：他们不会游泳！<br>所以扛着铁锹挖隧道，不是个好的技术选型。<br>在之后他们修隧道没碰面，显然他们的接口文档也非常之烂。</p>
+<p>小宝稍微一检索，就发现，修海底隧道有前人干过（废话），选了条技术路线：<br>利用盾构掘进机在地层中推进，它前方的原型刀盘可以切割土石。且它操作简单（易用性），厂家有钱，提供支持（稳定性）。<br>星星牌传送带可以用来运送土石。比月亮牌传送带面积大，单位时间内运送量上升。（性能）<br>星星牌机器人可以安装隧道管片，且于大爷用过它（重视经验）<br>星星牌卫星手机信号好，通话质量佳，可以随时随地同步项目进度（接口文档）</p>
+<p>项目开工了，有工人反映，盾构掘进机一秒内的切割量是 200 斤，但星星牌传送带一秒内的传送量是 190 斤，这就造成了少量土石被直接抛在传送带底部，工人时不时的要去清除。（开发规范的定制）  </p>
+<p>所以在进行技术路线选型时，我们要考虑以下几点：易用性、稳定性、性能、经验、开发规范的定制……  </p>
+<h4 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h4><p>模块的整合<br>流程图<br>龙哥的草图</p>
+<h4 id="技术难点"><a href="#技术难点" class="headerlink" title="技术难点"></a>技术难点</h4><p>ppt</p>
+<h4 id="项目风险"><a href="#项目风险" class="headerlink" title="项目风险"></a>项目风险</h4><h4 id="项目排期"><a href="#项目排期" class="headerlink" title="项目排期"></a>项目排期</h4><h5 id="模块划分实例"><a href="#模块划分实例" class="headerlink" title="模块划分实例"></a>模块划分实例</h5><p>猎才通：</p>
+<ul>
+<li>A： 首页</li>
+<li>B：项目管理-我的项目-新建<br> 项目管理-我的项目-项目创建成功<br> 项目管理-我的项目列表<br> 项目管理-我的项目详情页</li>
+<li>C： 项目管理-人才管理<br> 项目管理-人才推荐</li>
+<li>D：找人才<br>-人才库<br>-我的人才库<br>-简历详情页(有预览状态和编辑状态两种)</li>
+</ul>
+<p>需求评审提前  </p>
+<h3 id="谁来做？"><a href="#谁来做？" class="headerlink" title="谁来做？"></a>谁来做？</h3><h4 id="接口负责人"><a href="#接口负责人" class="headerlink" title="接口负责人"></a>接口负责人</h4>
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#架构"><span class="toc-number">1.</span> <span class="toc-text">架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基础架构"><span class="toc-number">1.1.</span> <span class="toc-text">基础架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#业务架构"><span class="toc-number">1.2.</span> <span class="toc-text">业务架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#系统概要设计"><span class="toc-number">1.3.</span> <span class="toc-text">系统概要设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目案例"><span class="toc-number">2.</span> <span class="toc-text">项目案例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#于大爷挖隧道"><span class="toc-number">3.</span> <span class="toc-text">于大爷挖隧道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#于大爷复盘会"><span class="toc-number">4.</span> <span class="toc-text">于大爷复盘会</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#提出需求"><span class="toc-number">4.1.</span> <span class="toc-text">提出需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#需求分析"><span class="toc-number">4.2.</span> <span class="toc-text">需求分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#拒绝不规范的需求文档"><span class="toc-number">4.2.1.</span> <span class="toc-text">拒绝不规范的需求文档</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#需求的紧急度"><span class="toc-number">4.2.2.</span> <span class="toc-text">需求的紧急度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#最佳方案"><span class="toc-number">4.2.3.</span> <span class="toc-text">最佳方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#排期"><span class="toc-number">4.2.4.</span> <span class="toc-text">排期</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#开发的觉悟"><span class="toc-number">4.2.5.</span> <span class="toc-text">开发的觉悟</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#系统的概要设计"><span class="toc-number">4.3.</span> <span class="toc-text">系统的概要设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#模块划分"><span class="toc-number">4.3.1.</span> <span class="toc-text">模块划分</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#一切皆需解耦"><span class="toc-number">4.3.1.1.</span> <span class="toc-text">一切皆需解耦</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#技术路线"><span class="toc-number">4.3.2.</span> <span class="toc-text">技术路线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现思路"><span class="toc-number">4.3.3.</span> <span class="toc-text">实现思路</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#技术难点"><span class="toc-number">4.3.4.</span> <span class="toc-text">技术难点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#项目风险"><span class="toc-number">4.3.5.</span> <span class="toc-text">项目风险</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#项目排期"><span class="toc-number">4.3.6.</span> <span class="toc-text">项目排期</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#模块划分实例"><span class="toc-number">4.3.6.1.</span> <span class="toc-text">模块划分实例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#谁来做？"><span class="toc-number">4.4.</span> <span class="toc-text">谁来做？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#接口负责人"><span class="toc-number">4.4.1.</span> <span class="toc-text">接口负责人</span></a></li></ol></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

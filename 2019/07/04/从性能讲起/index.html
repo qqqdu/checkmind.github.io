@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>从性能讲起 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>从性能讲起</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/07/04</time>
+            
+            
+          </div>
+          <p>一些读书总结</p>
+<h1 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h1><h1 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h1><h1 id="HTTP请求"><a href="#HTTP请求" class="headerlink" title="HTTP请求"></a>HTTP请求</h1><h1 id="节流防抖？"><a href="#节流防抖？" class="headerlink" title="节流防抖？"></a>节流防抖？</h1><h2 id="webpack和Gzip"><a href="#webpack和Gzip" class="headerlink" title="webpack和Gzip"></a>webpack和Gzip</h2><ul>
+<li>DllPlugin： 库不变更，我绝不打包！  </li>
+<li>Happypack： 你电脑是多核的，我的loaders全都要用！  </li>
+<li>webpack-bundle-analyzer：让我看看你项目内裤的大小  </li>
+<li>require.ensure： 动态加载我最在行  </li>
+<li>Gzip 后端：前端小老弟，你想更快吗？  </li>
+</ul>
+<h1 id="HTTP-返回"><a href="#HTTP-返回" class="headerlink" title="HTTP 返回"></a>HTTP 返回</h1><ul>
+<li>服务端渲染： 服务端跑完虚拟dom后，把页面返回给浏览器，此时将浏览器的一部分工作交给服务器做，能者多劳，但在 “网民横行” 的现在，浏览器数量远大于服务器数量，服务器亚历山大，这算是服务端渲染的一个弊端。优先考虑其他seo方案，无路可走时，最后一步买服务器做服务端渲染！  「吐槽，加缓存后的node中间层压力有多大？」  </li>
+</ul>
+<h1 id="css"><a href="#css" class="headerlink" title="css"></a>css</h1><p><code>#myList  li {}</code>  </p>
+<p>我们是从 #myList =&gt; li 开始读, 坑爹的浏览器是从 li -&gt; #myList，它会先遍历所有 li 节点！！！<br>再看看它！<br>……</p>
+<p><code>* {}</code><br>so: </p>
+<ul>
+<li>别特娘的用 通配符了  </li>
+<li>最好别用元素选择器，用类名！  </li>
+<li>css 渲染是阻塞的： 我没渲染呢，你们都等等 (css资源先加载先渲染)  </li>
+</ul>
+<h1 id="js"><a href="#js" class="headerlink" title="js"></a>js</h1><ul>
+<li>async defer 模式  </li>
+</ul>
+<h1 id="Dom操作咋就这么慢"><a href="#Dom操作咋就这么慢" class="headerlink" title="Dom操作咋就这么慢"></a>Dom操作咋就这么慢</h1><ul>
+<li>JS 引擎和渲染引擎 之间的“桥连”，竟然要收tmd过桥费！，所以你以后“送货”的时候尽量一次性送完  </li>
+</ul>
+<h1 id="Event-Loop"><a href="#Event-Loop" class="headerlink" title="Event Loop"></a>Event Loop</h1><ul>
+<li>macro-task 比如： setTimeout、setInterval、 setImmediate、script（整体代码）、 I/O 操作、UI 渲染等</li>
+<li>micro-task 比如: process.nextTick、Promise、  MutationObserver 等。  </li>
+</ul>
+<blockquote>
+<p>macro-task 出栈是一个个出的，micro-task 是一组一组出的。<br>上面这句话你一定没听懂哈哈哈哈，看代码  </p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">  &#125;, <span class="number">0</span>)</span><br><span class="line">  <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    resolve(<span class="number">2</span>)</span><br><span class="line">  &#125;).then(<span class="function"><span class="params">ev</span> =&gt;</span> <span class="built_in">console</span>.log(ev))</span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">4</span>)</span><br><span class="line">  &#125;, <span class="number">0</span>)</span><br><span class="line">  <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    resolve(<span class="number">3</span>)</span><br><span class="line">  &#125;).then(<span class="function"><span class="params">ev</span> =&gt;</span> <span class="built_in">console</span>.log(ev))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2 3 1 4<br>以上结果你肯定能根据经验主义猜出来，但你还可以清晰的理解它  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>) </span>&#123; &lt;- 宏任务 <span class="number">0</span></span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123; &lt;- 宏任务 <span class="number">1</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">  &#125;, <span class="number">0</span>)</span><br><span class="line">  <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123; &lt;- 微任务 <span class="number">1</span></span><br><span class="line">    resolve(<span class="number">2</span>)</span><br><span class="line">  &#125;).then(<span class="function"><span class="params">ev</span> =&gt;</span> <span class="built_in">console</span>.log(ev))</span><br><span class="line">  setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123; &lt;- 宏任务 <span class="number">2</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">4</span>)</span><br><span class="line">  &#125;, <span class="number">0</span>)</span><br><span class="line">  <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123; 微任务 <span class="number">2</span></span><br><span class="line">    resolve(<span class="number">3</span>)</span><br><span class="line">  &#125;).then(<span class="function"><span class="params">ev</span> =&gt;</span> <span class="built_in">console</span>.log(ev))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先把这些任务排到队列里  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">macro&lt;list&gt; = [宏任务 0, 宏任务 1, 宏任务 2]</span><br><span class="line">micro&lt;list&gt; = [微任务 1, 微任务 2]</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">再读这句话： macro-task 出队列是一个个出的，micro-task 是一组一组出的。</span><br><span class="line">宏任务 0 -&gt; 微任务1 -&gt; 微任务 2 -&gt; 宏任务 1 -&gt; 宏任务 2  </span><br><span class="line"></span><br><span class="line">别急，再练习一下  </span><br><span class="line"></span><br><span class="line">```javascript</span><br><span class="line">function main() &#123;</span><br><span class="line">  setTimeout(() =&gt; &#123;</span><br><span class="line">    console.log(1)</span><br><span class="line">  &#125;, 0)</span><br><span class="line">  new Promise((resolve) =&gt; &#123;</span><br><span class="line">    resolve(2)</span><br><span class="line">  &#125;).then(ev =&gt; console.log(ev))</span><br><span class="line">  setTimeout(() =&gt; &#123;</span><br><span class="line">    console.log(4)</span><br><span class="line">  &#125;, 0)</span><br><span class="line">  new Promise((resolve) =&gt; &#123;</span><br><span class="line">    resolve(3)</span><br><span class="line">  &#125;).then(ev =&gt; console.log(ev))</span><br><span class="line"></span><br><span class="line">  setTimeout(() =&gt; &#123;</span><br><span class="line">    new Promise((resolve) =&gt; &#123;</span><br><span class="line">      resolve(3)</span><br><span class="line">    &#125;).then(ev =&gt; console.log(ev))</span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      console.log(6)</span><br><span class="line">    &#125;, 0)</span><br><span class="line">    new Promise((resolve) =&gt; &#123;</span><br><span class="line">      resolve(4)</span><br><span class="line">    &#125;).then(ev =&gt; console.log(ev))</span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      console.log(5)</span><br><span class="line">    &#125;, 0)</span><br><span class="line">  &#125;, 3000)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大声告诉我以上执行结果！！！<br>如果你想更快的渲染dom，你会让它在宏任务还是微任务/？  </p>
+<hr>
+<h1 id="开始做木易杨大神的知识整理"><a href="#开始做木易杨大神的知识整理" class="headerlink" title="开始做木易杨大神的知识整理"></a>开始做木易杨大神的知识整理</h1><blockquote>
+<p>2019/8/31 以前做不完是小狗！！  –尼古拉斯.杜<br><a href="https://github.com/yygmind/blog" target="_blank" rel="noopener">https://github.com/yygmind/blog</a>  </p>
+</blockquote>
+<h1 id="Javascript-的执行上下文和执行栈"><a href="#Javascript-的执行上下文和执行栈" class="headerlink" title="Javascript 的执行上下文和执行栈"></a>Javascript 的执行上下文和执行栈</h1><p>这篇在半年前看过，过了这么久知识点又模糊了，惭愧呀……  </p>
+<hr>
+<p>执行上下文： 是代码在解析和执行时所在环境的抽象概念<br>它分为三种：  </p>
+<ul>
+<li>全局上下文（window/golbal[node]…）</li>
+<li>函数上下文  </li>
+<li>eval (性能问题、安全问题)  </li>
+</ul>
+<hr>
+<p>执行栈：引擎会在运行的时候，将全局上下文以及函数上下文入栈，等栈顶函数运行完毕，再依次出栈。  </p>
+<hr>
+<p>执行上下文创建：  </p>
+<ul>
+<li>创建阶段  </li>
+<li>执行阶段  </li>
+</ul>
+<p>创建阶段：  </p>
+<ul>
+<li>this绑定  </li>
+<li>词法环境被创建  </li>
+<li>变量环境被创建  </li>
+</ul>
+<p>执行阶段：  </p>
+<ul>
+<li>直接执行代码</li>
+</ul>
+<h1 id="内存空间"><a href="#内存空间" class="headerlink" title="内存空间"></a>内存空间</h1><ul>
+<li>堆就是字典，引用类型存在这里  </li>
+<li>基本类型存在栈里</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = &#123;<span class="attr">n</span>: <span class="number">1</span>&#125;;</span><br><span class="line"><span class="keyword">var</span> b = a;</span><br><span class="line">a.x = a = &#123;<span class="attr">n</span>: <span class="number">2</span>&#125;;</span><br><span class="line"></span><br><span class="line">a.x 	<span class="comment">// 这时 a.x 的值是多少</span></span><br><span class="line">b.x 	<span class="comment">// 这时 b.x 的值是多少</span></span><br><span class="line"><span class="comment">// . 操作符优先级大于 =操作符</span></span><br></pre></td></tr></table></figure>
+<p>end</p>
+<hr>
+<h1 id="内存机制"><a href="#内存机制" class="headerlink" title="内存机制"></a>内存机制</h1><p>闭包又一定义：A 函数返回了 B 函数，且 B 函数引用了 A 函数内部的变量</p>
+<p>两种内存回收的方式：  </p>
+<ul>
+<li>引用计数 变量被引用就不清除，但如果 a 引用 b b 引用 a，就gg了，造成内存泄漏</li>
+<li>标记清除 从全局对象出发，能追溯到的变量就保留，追溯不到的就标记清除  </li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// div 引用了 onclick，并且 回调里又引用了 div</span></span><br><span class="line"><span class="keyword">var</span> div = <span class="built_in">document</span>.createElement(<span class="string">"div"</span>);</span><br><span class="line">div.onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"click"</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(div)</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>node 监测内存泄漏 <code>console.log(process.memoryUsage());</code>  </p>
+<h1 id="什么姿势内存会泄漏"><a href="#什么姿势内存会泄漏" class="headerlink" title="什么姿势内存会泄漏"></a>什么姿势内存会泄漏</h1><ul>
+<li>函数内部未定义的全局变量  </li>
+<li>未关掉的定时器或回调函数（eg：IE里的click事件）  </li>
+<li>闭包  </li>
+</ul>
+<blockquote>
+<p>一个变量被标记为 null 表示没有引用，则引擎会将它回收，而undfined 会将值置空，但变量还存在<br>const 的值，保证了引用地址的不可变性，所以 修改 变量的属性没问题，因为地址没变，而基本类型的地址和值是绑定的，so 不能改变</p>
+</blockquote>
+<hr>
+<h1 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h1><p>闭包特性：  </p>
+<ul>
+<li>可以访问当前函数以外的变量  </li>
+<li>即使外部函数已返回，还能访问外部函数定义的变量  </li>
+<li>可以更新外部变量的值</li>
+</ul>
+<hr>
+<h1 id="作用域链"><a href="#作用域链" class="headerlink" title="作用域链"></a>作用域链</h1><p>这里经常会和原型链混，从字面意思来区分，作用域！就要联想到执行上下文，当访问一个变量时，解析器会从当前作用域找，找不到就去上级找，直到找到，要是找到了全局（window）还没找到，那就要报错了<br><code>Uncaught ReferenceError: a is not defined</code></p>
+<h1 id="分析一段闭包代码"><a href="#分析一段闭包代码" class="headerlink" title="分析一段闭包代码"></a>分析一段闭包代码</h1><p>首先得搞清楚几个知识点  </p>
+<h2 id="变量对象"><a href="#变量对象" class="headerlink" title="变量对象"></a>变量对象</h2><p>变量对象是一个抽象的概念，在执行上下文 <strong><em>创建阶段</em></strong>，储存着在上下文定义的以下内容：1，函数的形参 2，函数声明 3，变量声明  </p>
+<h2 id="活动对象"><a href="#活动对象" class="headerlink" title="活动对象"></a>活动对象</h2><p>与变量对象对应，当处于 <strong><em>执行阶段</em></strong> 时，变量对象会转为活动对象（全局变量除外）  </p>
+<h2 id="自己分析去吧"><a href="#自己分析去吧" class="headerlink" title="自己分析去吧"></a>自己分析去吧</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建全局上下文</span></span><br><span class="line"><span class="keyword">var</span> scope = <span class="string">"global scope"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkscope</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> scope = <span class="string">"local scope"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> scope;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> foo = checkscope(); <span class="comment">// foo指向函数f</span></span><br><span class="line">foo();		</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> scope = <span class="string">"global scope"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkscope</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> scope = <span class="string">"local scope"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> scope;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">checkscope()();  </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> scope = <span class="string">"global scope"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkscope</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> scope = <span class="string">"local scope"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> scope;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> foo = checkscope(); </span><br><span class="line">foo();</span><br></pre></td></tr></table></figure>
+<h1 id="this-绑定"><a href="#this-绑定" class="headerlink" title="this 绑定"></a>this 绑定</h1><ul>
+<li>apply call bind  </li>
+<li>class内部用 =</li>
+<li>new Function  </li>
+<li>箭头函数<br>那，手写一个new函数试试，什么？你不会写？复习去吧～<br>再写一个硬绑定，函数无论在哪里调用，或者被谁调用，始终绑定初始化对象</li>
+</ul>
+<h1 id="浅拷贝和深拷贝"><a href="#浅拷贝和深拷贝" class="headerlink" title="浅拷贝和深拷贝"></a>浅拷贝和深拷贝</h1><p>看到这个标题的时候还算淡然，去年毕业的时候不知写过多少次深拷贝，现在写一个应该更简单。  </p>
+<h2 id="浅拷贝"><a href="#浅拷贝" class="headerlink" title="浅拷贝"></a>浅拷贝</h2><p>浅拷贝就只拷贝外面的一层，典型的方法像 <code>Object.assign</code> 或 <code>loadsh.extend</code>  或 <code>...</code> 扩展符</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">assign</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> hash = &#123;&#125;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">    hash[key] = obj[key]</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> hash</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>浅拷贝随随便便就撸一个<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;<span class="attr">a</span>:<span class="number">2</span>,<span class="attr">b</span>: &#123;<span class="attr">c</span>:<span class="number">3</span>&#125;&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = assign(obj)</span><br><span class="line">obj.a = <span class="number">4</span></span><br><span class="line">obj.b.c = <span class="number">3</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到，obj 和 obj2 共享 第二层的属性 c，而a作为基本类型，两个对象不共享。  </p>
+<h2 id="深拷贝"><a href="#深拷贝" class="headerlink" title="深拷贝"></a>深拷贝</h2><p>深拷贝则是拷贝所有属性。再撸一个深拷贝？<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> &#123;a: 2, b: &#123; c: 3 &#125; &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">obj, clone = &#123;&#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span>( <span class="keyword">let</span> key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">    <span class="comment">// 单独对 null 做了判断，因为 typeof null === 'object'</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> obj[key] !== <span class="string">'object'</span> || obj[key] === <span class="literal">null</span>) &#123;</span><br><span class="line">      clone[key] = obj[key]</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      clone[key] = deepClone(obj[key])</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> clone</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>看来在dxy工作了一年确实有长进，之前写这种函数要“脑梗”很久，现在花了五六分钟就写好了，还一次跑通。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var obj = &#123;a:2,c:&#123;b:3&#125;&#125;</span><br><span class="line">var obj1 = deepClone(obj)</span><br><span class="line">var obj2 = deepClone(obj)</span><br><span class="line">obj1.c.b = 444</span><br><span class="line">// obj1.c.b: 444</span><br><span class="line">// obj2.c.b: 3</span><br></pre></td></tr></table></figure></p>
+<p>没问题，所有属性都不共享了。<br>这就是tmd 深拷贝，当然项目中经常看到同事省时间这么写： <code>JSON.parse(JSON.stringify(obj))</code><br>大多数情况下，客户端代码这么写真心可以，因为数据量小，感受不到性能的差距。在数据量大的情况下，还是寻找一些<br>开源库去做深拷贝，像：lodash/immutable/jQuery.extend。  </p>
+<h2 id="我的观点正确吗"><a href="#我的观点正确吗" class="headerlink" title="我的观点正确吗"></a>我的观点正确吗</h2><p>以上两节是我“想当然”的写出的，当我看了木易杨的博客之后，发现有很多错误点。分为两点展开。</p>
+<ul>
+<li>deepClone 完美吗？  </li>
+<li><code>JSON.parse(JSON.stringify(obj))</code> 真的可以用在项目里做深拷贝吗？  <h3 id="JSON-方法"><a href="#JSON-方法" class="headerlink" title="JSON 方法"></a>JSON 方法</h3>用 <code>JSON.parse(JSON.stringify(obj))</code> 有什么缺点？<br>首先我们分析它是怎么实现深拷贝的。<br>对象 -&gt; json字符串 -&gt; 对象<br>既然是 json 字符串，那肯定有它的标准。一些特殊的对象不能在它里面正确的出现。<br>比如：Symbol Function undefined Date<br>可以试试  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  sym: <span class="built_in">Symbol</span>(<span class="string">'duhao'</span>),</span><br><span class="line">  date: <span class="keyword">new</span> <span class="built_in">Date</span>(),</span><br><span class="line">  b: <span class="literal">undefined</span>,</span><br><span class="line">  fn: <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = <span class="built_in">JSON</span>.parse(<span class="built_in">JSON</span>.stringify(obj))</span><br><span class="line"><span class="comment">// &#123; date: "2019-08-19T15:57:06.148Z" &#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>只留下了 date 类型，并且格式和 <code>new Date()</code> 不同，貌似被转换成了 ISO 标准。  </p>
+<p>所以当你的数据结构 当前或者之后 可能有以上类型时，不推荐使用该方法。<br>还有一个特殊的表达式：正则表达式。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;<span class="attr">c</span>: <span class="regexp">/fsf/</span>&#125;</span><br><span class="line"><span class="built_in">JSON</span>.stringify(obj)</span><br><span class="line"><span class="comment">// "&#123;"c":&#123;&#125;&#125;"</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到，JSON直接丢掉了我们的正则表达式，取而代之的是一个空对象。  </p>
+<p>json 结构还有一个缺点，是不能表示循环引用，如果一个对象内部存在循环引用，JSON 会怎么做呢？<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> b = &#123;&#125;</span><br><span class="line">a.b = a</span><br><span class="line"><span class="built_in">JSON</span>.stringify(a)</span><br><span class="line"><span class="comment">// 直接报错 Converting circular structure to JSON 提示循环引用。</span></span><br></pre></td></tr></table></figure></p>
+<p>既然有这么多雷区，以后还是少用这个方法为妙，说不准哪天就踩上了。  </p>
+<h3 id="自己写的-deepClone-有什么问题"><a href="#自己写的-deepClone-有什么问题" class="headerlink" title="自己写的 deepClone 有什么问题"></a>自己写的 deepClone 有什么问题</h3><p>让我再把这个方法贴过来。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> &#123;a: 2, b: &#123; c: 3 &#125; &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">obj, clone = &#123;&#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span>( <span class="keyword">let</span> key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">    <span class="comment">// 单独对 null 做了判断，因为 typeof null === 'object'</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> obj[key] !== <span class="string">'object'</span> || obj[key] === <span class="literal">null</span>) &#123;</span><br><span class="line">      clone[key] = obj[key]</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      clone[key] = deepClone(obj[key])</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> clone</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我还很“聪明”的对 null 做了一个判断，那用这个方法，再对比下 <code>JSON</code> 做深拷贝，看看能不能通过用例。  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  sym: <span class="built_in">Symbol</span>(<span class="string">'duhao'</span>),</span><br><span class="line">  date: <span class="keyword">new</span> <span class="built_in">Date</span>(),</span><br><span class="line">  b: <span class="literal">undefined</span>,</span><br><span class="line">  c: <span class="literal">null</span></span><br><span class="line">  fn: <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = deepClone(obj, &#123;&#125;)</span><br><span class="line"><span class="comment">// obj2</span></span><br><span class="line"><span class="comment">/* &#123; b: undefined</span></span><br><span class="line"><span class="comment">    date: &#123;&#125;</span></span><br><span class="line"><span class="comment">    fn: () =&gt; &#123;&#125;</span></span><br><span class="line"><span class="comment">    c: null</span></span><br><span class="line"><span class="comment">    sym: Symbol(duhao) </span></span><br><span class="line"><span class="comment">  &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，<code>deepClone</code> 比 json 好了很多，但 Date 类型还是有问题。  </p>
+<p>再试试循环引用：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> b = &#123;&#125;</span><br><span class="line">a.b = a</span><br><span class="line">deepClone(a)</span><br><span class="line"><span class="comment">// Maximum call stack size exceeded 直接爆栈！因为我们的递归函数一直运行下去了。</span></span><br></pre></td></tr></table></figure></p>
+<p>正则呢？<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deepClone(&#123;<span class="attr">a</span>: <span class="regexp">/sfsf/</span>&#125;)</span><br><span class="line"><span class="comment">// 和JSON表现一致</span></span><br><span class="line"><span class="comment">// &#123;a: &#123;&#125;&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>总结一下，存在以下几个问题：  </p>
+<ul>
+<li>Array 对象  </li>
+<li>函数传参 null  </li>
+<li>正则表达式  </li>
+<li>循环引用  </li>
+<li>数据格式过复杂还是会爆栈(因为是递归)  </li>
+<li>引用丢失问题  </li>
+<li>Symbol 为key 值如何拷贝?<br>我们一个个解决不就可以了。  <h3 id="完美的deepClone"><a href="#完美的deepClone" class="headerlink" title="完美的deepClone"></a>完美的<code>deepClone</code></h3><h4 id="兼容-Array-和-null"><a href="#兼容-Array-和-null" class="headerlink" title="兼容 Array 和 null"></a>兼容 <code>Array</code> 和 <code>null</code></h4></li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> &#123;a: 2, b: &#123; c: 3 &#125; &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="built_in">window</span>.stack = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">obj, hash = new WeakMap(</span>)) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">Object</span>.prototype.toString.apply(obj) !== <span class="string">'[object Object]'</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> obj</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(hash.has(obj)) &#123;</span><br><span class="line">    <span class="keyword">return</span> hash.get(obj)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">Array</span>.isArray(obj)) &#123;</span><br><span class="line">    clone = []</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    clone = &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  hash.set(obj, clone)</span><br><span class="line">  <span class="keyword">for</span>( <span class="keyword">let</span> key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">    <span class="comment">// 单独对 null 做了判断，因为 typeof null === 'object'</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">Object</span>.prototype.toString.apply(obj[key]) !== <span class="string">'[object Object]'</span>) &#123;</span><br><span class="line">      clone[key] = obj[key]</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        clone[key] = deepClone(obj[key], hash)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> clone</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">setMap</span>(<span class="params">key, val</span>) </span>&#123;</span><br><span class="line">  stack[key] = val</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过以上代码，我们还有两个问题未解决</p>
+<ul>
+<li>数据格式过复杂还是会爆栈(因为是递归)  </li>
+<li>Symbol 对象作为key值  </li>
+</ul>
+<h3 id="Reflect"><a href="#Reflect" class="headerlink" title="Reflect"></a>Reflect</h3><p>这个新方法可以用来得到 对象的所有属性，包括 Symbol 对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">let symbol = Symbol(&apos;duhao&apos;)</span><br><span class="line">let obj = &#123;&apos;name&apos;: &apos;duhao&apos;&#125;</span><br><span class="line">obj[symbol] = 2</span><br><span class="line">Reflect.ownKeys(obj)</span><br><span class="line">// [Symbol(duhao), &apos;name&apos;]</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这个方法既可以遍历普通key，也可以遍历Symbol key，我们可以用它来替代 for in，实现我们的深拷贝。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> &#123;a: 2, b: &#123; c: 3 &#125; &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">obj, hash = new WeakMap(</span>)) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">Object</span>.prototype.toString.apply(obj) !== <span class="string">'[object Object]'</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> obj</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(hash.has(obj)) &#123;</span><br><span class="line">    <span class="keyword">return</span> hash.get(obj)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">Array</span>.isArray(obj)) &#123;</span><br><span class="line">    clone = []</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    clone = &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  hash.set(obj, clone)</span><br><span class="line">  <span class="built_in">Reflect</span>.ownKeys(obj).forEach(<span class="function">(<span class="params">key, index</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">Object</span>.prototype.toString.apply(obj[key]) !== <span class="string">'[object Object]'</span>) &#123;</span><br><span class="line">      clone[key] = obj[key]</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        clone[key] = deepClone(obj[key], hash)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">return</span> clone</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="爆栈问题"><a href="#爆栈问题" class="headerlink" title="爆栈问题"></a>爆栈问题</h3><p>最终这个问题是比较难遇到的，如果需要拷贝的对象达到了浏览器栈的最大长度，那递归函数就会爆栈。<br>我们可以通过宏任务 setTimeout 或者 微任务 Promise 来包装上文封装的函数。<br>也可以将递归改为循环，因为这个情况比较难遇到，就不在此研究了。<br>???<br>sfd</p>
+<h1 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h1><ul>
+<li><a href="https://juejin.im/book/5b936540f265da0a9624b04b/section/5b936540f265da0aec223b5d" target="_blank" rel="noopener">https://juejin.im/book/5b936540f265da0a9624b04b/section/5b936540f265da0aec223b5d</a></li>
+</ul>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#DNS"><span class="toc-number">1.</span> <span class="toc-text">DNS</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP"><span class="toc-number">2.</span> <span class="toc-text">TCP</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP请求"><span class="toc-number">3.</span> <span class="toc-text">HTTP请求</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#节流防抖？"><span class="toc-number">4.</span> <span class="toc-text">节流防抖？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack和Gzip"><span class="toc-number">4.1.</span> <span class="toc-text">webpack和Gzip</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP-返回"><span class="toc-number">5.</span> <span class="toc-text">HTTP 返回</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#css"><span class="toc-number">6.</span> <span class="toc-text">css</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#js"><span class="toc-number">7.</span> <span class="toc-text">js</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Dom操作咋就这么慢"><span class="toc-number">8.</span> <span class="toc-text">Dom操作咋就这么慢</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Event-Loop"><span class="toc-number">9.</span> <span class="toc-text">Event Loop</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#开始做木易杨大神的知识整理"><span class="toc-number">10.</span> <span class="toc-text">开始做木易杨大神的知识整理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Javascript-的执行上下文和执行栈"><span class="toc-number">11.</span> <span class="toc-text">Javascript 的执行上下文和执行栈</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内存空间"><span class="toc-number">12.</span> <span class="toc-text">内存空间</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内存机制"><span class="toc-number">13.</span> <span class="toc-text">内存机制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#什么姿势内存会泄漏"><span class="toc-number">14.</span> <span class="toc-text">什么姿势内存会泄漏</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#闭包"><span class="toc-number">15.</span> <span class="toc-text">闭包</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#作用域链"><span class="toc-number">16.</span> <span class="toc-text">作用域链</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析一段闭包代码"><span class="toc-number">17.</span> <span class="toc-text">分析一段闭包代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量对象"><span class="toc-number">17.1.</span> <span class="toc-text">变量对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#活动对象"><span class="toc-number">17.2.</span> <span class="toc-text">活动对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自己分析去吧"><span class="toc-number">17.3.</span> <span class="toc-text">自己分析去吧</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#this-绑定"><span class="toc-number">18.</span> <span class="toc-text">this 绑定</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#浅拷贝和深拷贝"><span class="toc-number">19.</span> <span class="toc-text">浅拷贝和深拷贝</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#浅拷贝"><span class="toc-number">19.1.</span> <span class="toc-text">浅拷贝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#深拷贝"><span class="toc-number">19.2.</span> <span class="toc-text">深拷贝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我的观点正确吗"><span class="toc-number">19.3.</span> <span class="toc-text">我的观点正确吗</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JSON-方法"><span class="toc-number">19.3.1.</span> <span class="toc-text">JSON 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自己写的-deepClone-有什么问题"><span class="toc-number">19.3.2.</span> <span class="toc-text">自己写的 deepClone 有什么问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#完美的deepClone"><span class="toc-number">19.3.3.</span> <span class="toc-text">完美的deepClone</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#兼容-Array-和-null"><span class="toc-number">19.3.3.1.</span> <span class="toc-text">兼容 Array 和 null</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reflect"><span class="toc-number">19.3.4.</span> <span class="toc-text">Reflect</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#爆栈问题"><span class="toc-number">19.3.5.</span> <span class="toc-text">爆栈问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#文章"><span class="toc-number">20.</span> <span class="toc-text">文章</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

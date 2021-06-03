@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>抽象语法树(AST) | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>抽象语法树(AST)</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/03/18</time>
+            
+            
+          </div>
+          <p>抽象语法树入门到放弃？</p>
+<h2 id="抽象语法树（Abstract-syntax-tree-AST）"><a href="#抽象语法树（Abstract-syntax-tree-AST）" class="headerlink" title="抽象语法树（Abstract syntax tree AST）"></a>抽象语法树（Abstract syntax tree AST）</h2><blockquote>
+<p>在计算机科学中，抽象语法和抽象语法树其实是源代码的抽象语法结构的树状表现形式</p>
+</blockquote>
+<p>为什么是抽象的？</p>
+<h2 id="前端工程化，离不了-AST"><a href="#前端工程化，离不了-AST" class="headerlink" title="前端工程化，离不了 AST"></a>前端工程化，离不了 AST</h2><p>虽然AST是编译原理中的基础内容，但在大前端时代，它有很广的应用。<br>比如我们的babel、eslint、代码格式化、代码自动补全、代码压缩、JSX 甚至 Typescript 都是在 AST 上进行操作的。</p>
+<h2 id="初识-AST"><a href="#初识-AST" class="headerlink" title="初识 AST"></a>初识 AST</h2><p>AST 其实就是一个树状结构，<br>这里给出一个更好理解 AST 的工具 <a href="https://astexplorer.net/" target="_blank" rel="noopener">click</a></p>
+<p><code>var a = &#39;hello world&#39;</code></p>
+<p>以上代码转换后：  </p>
+<p><img src="../../../../imgs/1.jpg" alt="img">  </p>
+<p>这个结构包含了很多属性。  </p>
+<ul>
+<li>VariableDeclaration 变量声明</li>
+<li>FunctionDeclaration 函数声明</li>
+<li>Expression 表达式</li>
+<li>ThisExpression this表达式</li>
+<li>…</li>
+</ul>
+<p>你可以在文档里找到大部分属性 <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API#Node_objects" target="_blank" rel="noopener">文档</a><br>可以在ES标准里找到所有属性 <a href="https://github.com/estree/estree" target="_blank" rel="noopener">文档</a></p>
+<h2 id="AST-应用"><a href="#AST-应用" class="headerlink" title="AST 应用"></a>AST 应用</h2><p>应用AST，首先得先把 <code>JS</code> 代码转成 <code>AST</code>，然后用 文档中的 <code>API</code> 去修改树，修改完成后，再解析树并输出 <code>JS</code> 代码。<br>以下以 <code>recast</code> 举例。<br><code>recast</code> 是 Javascript 解析器，提供了AST接口。  </p>
+<blockquote>
+<p><a href="https://github.com/benjamn/ast-types/blob/master/def/core.ts" target="_blank" rel="noopener">recast api</a></p>
+</blockquote>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><blockquote>
+<p>npm install recast</p>
+</blockquote>
+<h3 id="新建-parse-js"><a href="#新建-parse-js" class="headerlink" title="新建 parse.js"></a>新建 parse.js</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">const</span> recast = <span class="built_in">require</span>(<span class="string">'recast'</span>);</span><br><span class="line"><span class="keyword">const</span> code = </span><br><span class="line"><span class="string">` </span></span><br><span class="line"><span class="string">  function add(a, b) &#123;return a + b&#125;</span></span><br><span class="line"><span class="string">  // hello</span></span><br><span class="line"><span class="string">`</span></span><br><span class="line"><span class="keyword">const</span> ast = recast.parse(code);</span><br><span class="line"><span class="keyword">const</span> add = ast.program.body[<span class="number">0</span>];</span><br><span class="line"><span class="comment">// 变量声明 变量符号 函数声明</span></span><br><span class="line"><span class="keyword">const</span> &#123;variableDeclaration, variableDeclarator, functionExpression&#125; = recast.types.builders;</span><br><span class="line">ast.program.body[<span class="number">0</span>] = variableDeclaration(<span class="string">"var"</span>, [</span><br><span class="line">  variableDeclarator(add.id, functionExpression(</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    add.params,</span><br><span class="line">    add.body</span><br><span class="line">  ))</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> output = recast.prettyPrint(ast, &#123; <span class="attr">tabWidth</span>: <span class="number">2</span> &#125;).code</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(output)</span><br></pre></td></tr></table></figure>
+<p>以上代码将 <code>code</code> 中的函数定义改成函数表达式</p>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><blockquote>
+<p>node parse.js</p>
+</blockquote>
+<h2 id="命令行读取文件"><a href="#命令行读取文件" class="headerlink" title="命令行读取文件"></a>命令行读取文件</h2><p><code>recast</code> 提供了 <code>run</code> 方法，来让我们在命令行里可以拿到js文件中的代码，像：<br>map.js<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">c</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">a();</span><br><span class="line">b();</span><br><span class="line"><span class="keyword">let</span> a = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">let</span> b = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">let</span> c = <span class="number">4</span>;</span><br><span class="line">c = a + b;</span><br><span class="line">b = c + a;</span><br><span class="line">a = c + b;</span><br></pre></td></tr></table></figure></p>
+<p>parse.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> recast = <span class="built_in">require</span>(<span class="string">"recast"</span>);</span><br><span class="line">recast.run(<span class="function"><span class="keyword">function</span>(<span class="params">ast, printSource</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(recast.print(ast).code)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>命令行输入  </p>
+<blockquote>
+<p><code>node parse demo.js</code>  </p>
+</blockquote>
+<p>这样，我们就可以在 <code>parse.js</code> 内部，操作 <code>demo.js</code> 的语法树</p>
+<h2 id="树的遍历"><a href="#树的遍历" class="headerlink" title="树的遍历"></a>树的遍历</h2><p>如果我们想对代码里的所有函数、表达式或者命名进行批量操作。 <code>recast</code> 提供了 <code>recast.visit</code> 方法进行节点树的遍历。<br>比如以下代码是遍历 <code>ExpressionStatement</code>，只要文档中能查到的，都可以遍历对应的格式。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// map.js</span></span><br><span class="line"><span class="keyword">const</span> recast  = <span class="built_in">require</span>(<span class="string">'recast'</span>)</span><br><span class="line"></span><br><span class="line">recast.run(<span class="function"><span class="keyword">function</span>(<span class="params">ast, printSource</span>) </span>&#123;</span><br><span class="line">  recast.visit(ast, &#123;</span><br><span class="line">      visitExpressionStatement: <span class="function"><span class="keyword">function</span>(<span class="params">&#123;node&#125;</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(node)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h2 id="很久之前的一个需求"><a href="#很久之前的一个需求" class="headerlink" title="很久之前的一个需求"></a>很久之前的一个需求</h2><p>在刚参加工作的时候，组长 给了我这么一个需求。</p>
+<blockquote>
+<p>在以前因为某种原因，引入了 Jquery ，但只用了 <code>$.extend</code> 方法，现在需要去除Jquery，重写这个方法。举个简单的例子。<br>当我重写完相关函数后，代码大概是这个样子。  </p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">import</span> &#123; extend &#125; <span class="keyword">from</span> <span class="string">'jquery'</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> 改成</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"> <span class="keyword">import</span> &#123; extend &#125; <span class="keyword">from</span> <span class="string">'utils/common'</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">'jquery'</span></span><br><span class="line"> $.extend()</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> 改成</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"> <span class="keyword">import</span> &#123; extend &#125; <span class="keyword">from</span> <span class="string">'jquery'</span></span><br><span class="line"> extend()</span><br></pre></td></tr></table></figure>
+<p>当时的做法是全局检索关键字 <code>jquery</code>，然后逐一去修改替换，如果需要修改的文件很多的话，一个美好的下午就没了。<br>当然，你可以直接检索 <code>import { extend } from &#39;jquery&#39;</code> 然后一键替换，这样会有问题，比如有个人这样写代码<code>import { extend} from &#39;jquery&#39;</code>，那就匹配不到了……<br>还有的人这么写代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>    &#123; extend&#125; </span><br><span class="line"><span class="keyword">from</span>     </span><br><span class="line"><span class="string">'jquery'</span></span><br></pre></td></tr></table></figure>
+<p>用 <code>AST</code> 怎么做呢？</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</span><br><span class="line"><span class="keyword">const</span> recast = <span class="built_in">require</span>(<span class="string">"recast"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123; literal,  importSpecifier, identifier, callExpression&#125; = recast.types.builders;</span><br><span class="line"></span><br><span class="line">fs.readdir(<span class="string">'./codes'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err, files</span>)</span>&#123;</span><br><span class="line">  files.map(<span class="function">(<span class="params">fileName</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> fileUrl = <span class="string">`./codes/<span class="subst">$&#123;fileName&#125;</span>`</span></span><br><span class="line">    <span class="built_in">console</span>.log(fileUrl)</span><br><span class="line">    fs.readFile(fileUrl, <span class="function"><span class="keyword">function</span>(<span class="params">err, data</span>) </span>&#123;</span><br><span class="line">      <span class="comment">// 读取文件失败/错误</span></span><br><span class="line">      <span class="keyword">if</span> (err) &#123;</span><br><span class="line">          <span class="keyword">throw</span> err;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">const</span> code = data.toString()</span><br><span class="line">      <span class="keyword">const</span> ast = recast.parse(code);</span><br><span class="line">    </span><br><span class="line">      recast.visit(ast, &#123;</span><br><span class="line">        visitImportDeclaration: <span class="function"><span class="keyword">function</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">'-----------'</span>)</span><br><span class="line">          <span class="keyword">if</span>(<span class="string">'jquery'</span> === path.node.source.value) &#123;</span><br><span class="line">            path.node.specifiers[<span class="number">0</span>] = importSpecifier(identifier(<span class="string">'extend'</span>))</span><br><span class="line">            </span><br><span class="line">            <span class="built_in">console</span>.log(path.node.specifiers)</span><br><span class="line">            path.node.source = literal(<span class="string">'utils/extend'</span>)</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        visitExpressionStatement: <span class="function"><span class="keyword">function</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">'++++++'</span>)</span><br><span class="line">          <span class="keyword">if</span>(</span><br><span class="line">            path.node.expression.callee.object.name === <span class="string">'$'</span> &amp;&amp;</span><br><span class="line">            path.node.expression.callee.property.name === <span class="string">'extend'</span></span><br><span class="line">          ) &#123;</span><br><span class="line">            path.node.expression = callExpression(identifier(<span class="string">'extend'</span>), path.node.expression.arguments)</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// console.log(memberExpression(identifier(''),identifier('extend'), false))</span></span><br><span class="line">          <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="keyword">const</span> output = recast.prettyPrint(ast, &#123; <span class="attr">tabWidth</span>: <span class="number">2</span> &#125;).code</span><br><span class="line">      fs.writeFile(fileUrl, output, &#123;&#125;, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`wirte <span class="subst">$&#123;fileName&#125;</span> OK!`</span>);</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="built_in">console</span>.log(files)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><blockquote>
+<p><a href="https://segmentfault.com/a/1190000016231512" target="_blank" rel="noopener">https://segmentfault.com/a/1190000016231512</a><br><a href="https://astexplorer.net" target="_blank" rel="noopener">https://astexplorer.net</a></p>
+</blockquote>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#抽象语法树（Abstract-syntax-tree-AST）"><span class="toc-number">1.</span> <span class="toc-text">抽象语法树（Abstract syntax tree AST）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#前端工程化，离不了-AST"><span class="toc-number">2.</span> <span class="toc-text">前端工程化，离不了 AST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初识-AST"><span class="toc-number">3.</span> <span class="toc-text">初识 AST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AST-应用"><span class="toc-number">4.</span> <span class="toc-text">AST 应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">4.1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#新建-parse-js"><span class="toc-number">4.2.</span> <span class="toc-text">新建 parse.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行"><span class="toc-number">4.3.</span> <span class="toc-text">运行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令行读取文件"><span class="toc-number">5.</span> <span class="toc-text">命令行读取文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#树的遍历"><span class="toc-number">6.</span> <span class="toc-text">树的遍历</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#很久之前的一个需求"><span class="toc-number">7.</span> <span class="toc-text">很久之前的一个需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结束"><span class="toc-number">8.</span> <span class="toc-text">结束</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

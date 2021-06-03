@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>js解析器 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>js解析器</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/04/25</time>
+            
+            
+          </div>
+          <p>解释解释，什么是他妈的编译原理</p>
+<h1 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理"></a>编译原理</h1><blockquote>
+<p>黄四郎：三天之后，一定给县长讲明白编译原理<br>张麻子：汤师爷，你给翻译翻译，什么叫编译原理？翻译翻译，什么叫编译原理？<br>汤师爷：这还用翻译，都说了。<br>张麻子：我让你翻译给我听，什么叫编译原理？<br>汤师爷：不用翻译，这就是编译原理啊。<br>黄四郎：难道你听不懂什么叫编译原理？<br>张麻子：我就想让你翻译翻译，什么叫编译原理！<br>汤师爷：编译原理嘛<br>张麻子：翻译出来给我听，什么他妈的叫编译原理！什么他妈的叫他妈的编译原理！<br>汤师爷：什么他妈的叫编译原理啊？（对黄四郎）<br>黄四郎：编译原理就是三天之后，我写串js脚本，扔进解析器里，词法分析、语法分析再执行，明白了吗？<br>汤师爷：这就是编译原理啊<br>张麻子：翻译翻译 翻译翻译！<br>汤师爷：编译原理就是三天之后，他写串js脚本，扔进解析器里，词法分析、语法分析再执行，！<br>张麻子：哈，大哥这他妈的编译原理啊，小弟我愿意等你三天<br>黄四郎：好  </p>
+</blockquote>
+<h2 id="源代码分析"><a href="#源代码分析" class="headerlink" title="源代码分析"></a>源代码分析</h2><p>源代码分析三个阶段：  </p>
+<ul>
+<li>词法（线性）分析，将代码从左到右转化为多个 token  </li>
+<li>层次分析，token 在层次划分中有多个 嵌套组，嵌套组 整体有自己的含义  </li>
+<li>语义分析，进行某些检查确保各个部分是有意义的组合在一起的。</li>
+</ul>
+<p>详细：  </p>
+<p>词法分析 -&gt; 语法分析 -&gt; 语义分析 -&gt; 中间代码生成 -&gt; 代码优化器 -&gt; 代码生成器</p>
+<h2 id="上下文无关文法"><a href="#上下文无关文法" class="headerlink" title="上下文无关文法"></a>上下文无关文法</h2><p>包含四个部分：  </p>
+<ul>
+<li>一个记号集合，如 <code>if</code> <code>else</code>  </li>
+<li>一个非记号集合  </li>
+<li>一个产生式集合，分为左部和右部，左部是 非记号集合，右部是记号或非记号集合，由箭头相连接  </li>
+<li>一个开始符号，指定的非记号集合</li>
+</ul>
+<p>stmt 可以为（产生式） …… <code>stmt -&gt; if( expr ) stmt else stmt</code>  </p>
+<h2 id="分析树"><a href="#分析树" class="headerlink" title="分析树"></a>分析树</h2><p>分析树描绘了如何从文法的开始符号开始推导出它的语言的一个语句。<br>比如产生式 <code>A -&gt; XYZ</code><br>可以表示为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   ----X  </span><br><span class="line">A -----Y</span><br><span class="line">   ----Z</span><br></pre></td></tr></table></figure></p>
+<p>分析树具有以下特性  </p>
+<ul>
+<li>树根标记为开始符号  </li>
+<li>每个叶节点由记号或空串组成</li>
+<li>每个内节点由非终止符标记  </li>
+</ul>
+<h2 id="二义性"><a href="#二义性" class="headerlink" title="二义性"></a>二义性</h2><p>一个产生式对应了多个分析树，就产生了二义性。  </p>
+<h2 id="操作符的优先级"><a href="#操作符的优先级" class="headerlink" title="操作符的优先级"></a>操作符的优先级</h2><p>从上到下优先级递增，比如：<br>左结合: + -<br>左结合: * /</p>
+<h2 id="深度遍历"><a href="#深度遍历" class="headerlink" title="深度遍历"></a>深度遍历</h2><p>产生分析树之后，通过深度遍历。</p>
+<h2 id="词法分析"><a href="#词法分析" class="headerlink" title="词法分析"></a>词法分析</h2><p>记号：关键字、操作符、标识符、常量、文字串、标点符号 (id)</p>
+<p>词素：记号的真实字符  (PI)</p>
+<p>模式：描述记号的规则 (3.1415926……)  </p>
+<h2 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h2><p>是描述模式的方式，每个模式匹配一个字符串集  </p>
+<h3 id="字符串长度-S"><a href="#字符串长度-S" class="headerlink" title="字符串长度 S"></a>字符串长度 S</h3><p>比如 banana  </p>
+<p>S 的前缀：ban  (S = 3)<br>S 的后缀：ana (S=3)<br>S 的子字符串：去掉一个前缀和后缀后，中间的字符串<br>S 的真前缀（后缀/子字符串）：满足以上条件，但不等于 S的<br>S 的子序列：删除若干个字符后的字符串，可以不相邻  </p>
+<h3 id="语言"><a href="#语言" class="headerlink" title="语言"></a>语言</h3><p>是给定字母表上任意一个字符串集合</p>
+<h2 id="状态转换图"><a href="#状态转换图" class="headerlink" title="状态转换图"></a>状态转换图</h2><p>描述语法分析器为得到下一记号而调用词法分析器时，词法分析器要做的动作。  </p>
+<p>圆圈表示状态，箭头表示边，</p>
+<h2 id="实现流程"><a href="#实现流程" class="headerlink" title="实现流程"></a>实现流程</h2><p>RE -&gt; NFA -&gt; DFA -&gt; 词法分析代码</p>
+<h3 id="汤姆森算法"><a href="#汤姆森算法" class="headerlink" title="汤姆森算法"></a>汤姆森算法</h3><h2 id="词法分析-1"><a href="#词法分析-1" class="headerlink" title="词法分析"></a>词法分析</h2><blockquote>
+<p>汤师爷：<strong> 词法分析阶段是编译过程的第一个阶段。这个阶段的任务是从左到右一个字符一个字符地读入源程序，即对构成源程序的字符流进行扫描然后根据构词规则识别单词(也称单词符号或符号)。词法分析程序实现这个任务。词法分析程序可以使用lex等工具自动生成。 </strong></p>
+</blockquote>
+<p>黄四郎：说人话！  </p>
+<h3 id="从-Lex-说起"><a href="#从-Lex-说起" class="headerlink" title="从 Lex 说起"></a>从 Lex 说起</h3><p>Lex是 LEXical compiler的缩写，是Unix环境下非常著名的工具,主要功能是生成一个词法分析器(scanner)的C源码，描述规则采用正则表达式(regular expression)。</p>
+<h4 id="Lex-in-Javascript"><a href="#Lex-in-Javascript" class="headerlink" title="Lex in Javascript"></a>Lex in Javascript</h4><p>jison(鸡森？) 库  </p>
+<pre><code># npm install jison -g
+# cd jison/example
+# jison calculator.jison
+</code></pre><p>在当前目录生成了 calculator.js 文件，这个文件是根据 calculator.jison 生成的<br><a href="https://github.com/zaach/jison" target="_blank" rel="noopener">https://github.com/zaach/jison</a><br>看了看jison文件，根本不是人看的，</p>
+<p><a href="https://www.cnblogs.com/tugenhua0707/p/7759414.html" target="_blank" rel="noopener">https://www.cnblogs.com/tugenhua0707/p/7759414.html</a><br><a href="https://www.cnblogs.com/tugenhua0707/p/7759414.html" target="_blank" rel="noopener">https://www.cnblogs.com/tugenhua0707/p/7759414.html</a><br><a href="https://segmentfault.com/a/1190000017241258" target="_blank" rel="noopener">https://segmentfault.com/a/1190000017241258</a></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#编译原理"><span class="toc-number">1.</span> <span class="toc-text">编译原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#源代码分析"><span class="toc-number">1.1.</span> <span class="toc-text">源代码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#上下文无关文法"><span class="toc-number">1.2.</span> <span class="toc-text">上下文无关文法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析树"><span class="toc-number">1.3.</span> <span class="toc-text">分析树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二义性"><span class="toc-number">1.4.</span> <span class="toc-text">二义性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作符的优先级"><span class="toc-number">1.5.</span> <span class="toc-text">操作符的优先级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#深度遍历"><span class="toc-number">1.6.</span> <span class="toc-text">深度遍历</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#词法分析"><span class="toc-number">1.7.</span> <span class="toc-text">词法分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正则表达式"><span class="toc-number">1.8.</span> <span class="toc-text">正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串长度-S"><span class="toc-number">1.8.1.</span> <span class="toc-text">字符串长度 S</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#语言"><span class="toc-number">1.8.2.</span> <span class="toc-text">语言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#状态转换图"><span class="toc-number">1.9.</span> <span class="toc-text">状态转换图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现流程"><span class="toc-number">1.10.</span> <span class="toc-text">实现流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#汤姆森算法"><span class="toc-number">1.10.1.</span> <span class="toc-text">汤姆森算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#词法分析-1"><span class="toc-number">1.11.</span> <span class="toc-text">词法分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#从-Lex-说起"><span class="toc-number">1.11.1.</span> <span class="toc-text">从 Lex 说起</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Lex-in-Javascript"><span class="toc-number">1.11.1.1.</span> <span class="toc-text">Lex in Javascript</span></a></li></ol></li></ol></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

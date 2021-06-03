@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang=>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>Vue 文档查漏补缺 | qqqdu&#39;s blog</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>qqqdu's blog</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Vue 文档查漏补缺</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019/12/05</time>
+            
+            
+          </div>
+          <p>不能老往前跑，要时不时看会儿地图  </p>
+<h2 id="Vue-文档"><a href="#Vue-文档" class="headerlink" title="Vue 文档"></a>Vue 文档</h2><p>工作中用 Vue 比较多，但好像看文档已经是两年前的事情了，有很多边边角角的用法或是不太优雅的写法肯定有遗漏，所以再看一遍，查漏补缺。  </p>
+<h2 id="避免-v-for-和-v-if-混合使用"><a href="#避免-v-for-和-v-if-混合使用" class="headerlink" title="避免 v-for 和 v-if 混合使用"></a>避免 <code>v-for</code> 和 <code>v-if</code> 混合使用</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">v-for</span>=<span class="string">'item in items'</span> <span class="attr">v-if</span>=<span class="string">'item.active'</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面这个写法很常见吧，我也写过不少这样的代码。但文档里说了，不能这样用，原因是 <code>v-for</code> 比 <code>v-if</code> 优先级高，所以以上模版是这样执行的:  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(item <span class="keyword">in</span> items) &#123;</span><br><span class="line">  <span class="keyword">if</span>(item.active) &#123;</span><br><span class="line">    <span class="comment">// run something</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>乍一看没啥问题，但 items 是响应式的，任意一个数组成员改变了，以上都会执行一遍。<br>items 为分两种类型：<code>active</code> 和 <code>unactive</code>。实际上遍历前者就行了。其余的遍历都是浪费。而且 后者改变了也会遍历。这也是多余的。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">v-for</span>=<span class="string">'item in items'</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  items = items.map(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">return</span> item.active</span></span><br><span class="line">  &#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这样就好多了～</p>
+<h2 id="data-的值必须是函数"><a href="#data-的值必须是函数" class="headerlink" title="data 的值必须是函数"></a>data 的值必须是函数</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    name: <span class="string">''</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为什么要这样设计呢？如果组件的 <code>data</code> 都是对象的话，组件被调用多次，所有的组件都会共享这个对象。</p>
+<h2 id="Props-描述尽可能详细"><a href="#Props-描述尽可能详细" class="headerlink" title="Props 描述尽可能详细"></a>Props 描述尽可能详细</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">props = &#123;</span><br><span class="line">  name: &#123;</span><br><span class="line">    type: <span class="built_in">String</span>,</span><br><span class="line">    required: <span class="literal">true</span>,</span><br><span class="line">    <span class="keyword">default</span>: <span class="string">''</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>详细的 props 就是文档～</p>
+<h2 id="key-字段"><a href="#key-字段" class="headerlink" title="key 字段"></a>key 字段</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">v-if</span>=<span class="string">'flag'</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">''</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">v-else</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">''</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果 <code>flag</code> 发生变化，<code>Vue</code> 只会对 <code>input</code> 进行修补，不会重新渲染 <code>input</code>，它会尽可能的复用 <code>DOM</code>，所以当你在 <code>input</code> 键入值时，再切换 <code>flag</code>，值依然会存在。  </p>
+<p>给他们赋值不同的 <code>key</code>，就会避免这种“错误”  </p>
+<p>再看下面这个例子<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">v-for</span>=<span class="string">'item in items'</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">''</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>当 items 顺序发生变化时，vue 默认不会将节点的顺序调换，因为这比直接删除节点再生成节点的开销大多了。所以再这个 demo 中，Vue 不会复用节点。  </p>
+<p>但当子组件的内容过多或者嵌套太深时，复用又很重要了，这时，我们需要加上 <code>key</code> ，顺序发生变化时，Vue会复用它。  </p>
+<h2 id="is字段"><a href="#is字段" class="headerlink" title="is字段"></a>is字段</h2><p>在下面的例子中，使用 <code>is=&quot;todo-item&quot;</code> 来代替 <code>&lt;todo-item&gt;</code> 的写法，因为 ul 内部只有 li 标签有效，这种写法避免了将 <code>&lt;todo-item&gt;</code> 识别为标签潜在的错误。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">li</span></span></span><br><span class="line"><span class="tag">    <span class="attr">is</span>=<span class="string">"todo-item"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">v-for</span>=<span class="string">"(todo, index) in todos"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">v-bind:key</span>=<span class="string">"todo.id"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">v-bind:title</span>=<span class="string">"todo.title"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">v-on:remove</span>=<span class="string">"todos.splice(index, 1)"</span></span></span><br><span class="line"><span class="tag">  &gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>但以上问题只会在 vue 以 cdn 引入时出现。</p>
+<h2 id="v-modal-修饰符"><a href="#v-modal-修饰符" class="headerlink" title="v-modal 修饰符"></a>v-modal 修饰符</h2><h3 id="lazy"><a href="#lazy" class="headerlink" title=".lazy"></a>.lazy</h3><p>在 <code>input</code> change 时，才同步，而非 <code>onInput</code> 时  </p>
+<h3 id="number"><a href="#number" class="headerlink" title=".number"></a>.number</h3><p>自动将用户输入的值转为 number 类型  </p>
+<h3 id="trim"><a href="#trim" class="headerlink" title=".trim"></a>.trim</h3><p>去除首位字符串  </p>
+<h3 id="组件也可以用-v-modal"><a href="#组件也可以用-v-modal" class="headerlink" title="组件也可以用 v-modal"></a>组件也可以用 v-modal</h3><ul>
+<li>props 需要有绑定的值  </li>
+<li>组件 input 时，需要 $emit(‘input’, event)</li>
+</ul>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Vue-文档"><span class="toc-number">1.</span> <span class="toc-text">Vue 文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#避免-v-for-和-v-if-混合使用"><span class="toc-number">2.</span> <span class="toc-text">避免 v-for 和 v-if 混合使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#data-的值必须是函数"><span class="toc-number">3.</span> <span class="toc-text">data 的值必须是函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Props-描述尽可能详细"><span class="toc-number">4.</span> <span class="toc-text">Props 描述尽可能详细</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#key-字段"><span class="toc-number">5.</span> <span class="toc-text">key 字段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#is字段"><span class="toc-number">6.</span> <span class="toc-text">is字段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#v-modal-修饰符"><span class="toc-number">7.</span> <span class="toc-text">v-modal 修饰符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lazy"><span class="toc-number">7.1.</span> <span class="toc-text">.lazy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#number"><span class="toc-number">7.2.</span> <span class="toc-text">.number</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trim"><span class="toc-number">7.3.</span> <span class="toc-text">.trim</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件也可以用-v-modal"><span class="toc-number">7.4.</span> <span class="toc-text">组件也可以用 v-modal</span></a></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2021 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>
